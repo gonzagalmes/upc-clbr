@@ -5,9 +5,11 @@
 (function(){
   var API = 'https://script.google.com/macros/s/AKfycbywynnHSFUaRSQNl9VVSqfCOhGBVTTkmTvPlAM5lBBw1tivHK6GgY3iGdf4VFyfgL27qA/exec';
   window.UPC_PWA = true;
+  // sesión del PIN (90 días), la guarda la app al entrar
+  var tok = function(){ try{ var o=JSON.parse(localStorage.getItem('upc-tok')||'null'); return o && o.e > Date.now() ? o.t : ''; }catch(e){ return ''; } };
   if (!(window.google && window.google.script)) {
     var llamar = function(fn, args, ok, mal, u){
-      fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ fn: fn, args: args }), redirect:'follow' })
+      fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ fn: fn, args: args, tok: tok() }), redirect:'follow' })
         .then(function(r){ if(!r.ok) throw new Error('El servidor respondió '+r.status); return r.json(); })
         .then(function(j){ if(j.ok) { ok && ok(j.v, u); } else { mal && mal(new Error(j.e), u); } })
         .catch(function(e){ mal && mal(new Error(navigator.onLine===false ? 'Sin conexión a internet' : (e && e.message) || 'No se pudo conectar'), u); });

@@ -759,6 +759,12 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 #pushBar{position:fixed;left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:58;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:12px;display:flex;gap:10px;align-items:center;font-size:14px;max-width:520px;margin:0 auto}
 #pushBar b{display:block;font-size:15px} #pushBar span{color:var(--dim);font-size:13px;line-height:1.3;display:block} #pushBar .x{display:flex;gap:6px}
 #pushBar button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 12px;cursor:pointer;white-space:nowrap} #pushBar .si{background:#0064B0;color:#fff} #pushBar .no{background:var(--line);color:var(--fg)}
+
+.pinin{display:block;width:100%;max-width:220px;margin:8px auto 0;font:600 28px/1 var(--f-mono,monospace);letter-spacing:12px;text-align:center;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--fg)}
+.pinin.sm{font-size:22px;letter-spacing:8px} .pinin:focus{outline:none;border-color:#0064B0}
+.pinpaso label{display:block;font-size:13px;font-weight:700;color:var(--dim);text-align:center;margin-top:10px}
+button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
+.pinl{display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:auto} .pinr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line)}
 /* 🎄 decoración por temporada */
 #decoCv{position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:30}
 .band.tband{position:relative; overflow:hidden}
@@ -841,7 +847,7 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 
 <script>
 window.__appStarted=true;
-const APP_V='4.13.1';
+const APP_V='4.14.0';
 
 // ================= memoria en la planilla (v4.6) =================
 // En el iPhone, Safari borra la memoria del navegador de la app al cerrarse (la app vive dentro de un marco de Google).
@@ -894,10 +900,11 @@ const GS_PEND=new Map(); let GS_ID=0;
 function gs(fn,...args){ return new Promise((res,rej)=>{ const id=++GS_ID; GS_PEND.set(id,{fn,t:Date.now()});
   const fin=f=>v=>{ if(!GS_PEND.has(id)) return; GS_PEND.delete(id); clearTimeout(to); f(v); };
   const to=setTimeout(fin(rej).bind(null,new Error(`el servidor no respondió a "${fn}" en 60 s`)),60000);
-  google.script.run.withSuccessHandler(fin(res)).withFailureHandler(fin(rej))[fn](...args); }); }
+  google.script.run.withSuccessHandler(fin(res)).withFailureHandler(fin(e=>{ if(/^(Error: )?PIN:/.test(String((e&&e.message)||e)) && window.UPC_PWA && !PIN_FONDO.includes(fn)) pinPedir().then(()=>gs(fn,...args).then(res,rej), rej); else rej(e); }))[fn](...args); }); }
+const PIN_FONDO=['getMemo','setMemo','misAvisos','getMiDisp','getCuo','pushRegistrar','avisoVisto'];   // llamadas de fondo: no abren la ventana del PIN
 function gsPendTxt(){ const now=Date.now(); return [...GS_PEND.values()].map(x=>`${x.fn} (${Math.round((now-x.t)/1000)} s)`).join(', '); }
 async function gsj(fn,...args){ return JSON.parse(await gs(fn,...args)); }
-function errMsg(e){ return String((e&&e.message)||e||'algo falló').replace(/^Error:\s*/,''); }
+function errMsg(e){ return String((e&&e.message)||e||'algo falló').replace(/^Error:\s*/,'').replace(/^PIN:\s*/,''); }
 let tt; function toast(t,err){ const el=$('#toast'); el.textContent=t; el.className=err?'err':''; el.hidden=false; clearTimeout(tt); tt=setTimeout(()=>el.hidden=true, err?6000:2800); }
 function openModal(html,wide){ const m=$('#modal'); m.className='modal'+(wide?' wide':''); m.innerHTML=html; $('#ovl').hidden=false; }
 function closeModal(){ $('#ovl').hidden=true; }
@@ -1288,6 +1295,7 @@ function plural(n,s,p){ return n===1?s:(p||s+'s'); }
 // pozo acumulado del fondo (todos los médicos, a $15.000 la cuota)
 function pozoDatos(){
   const C=INIT.cuo; if(!C||!C.m) return null; let pag=0, tot=0;
+  if(C.agg) return {pag:C.agg.pag, tot:C.agg.tot, monto:C.monto, y:C.y};
   Object.values(C.m).forEach(r=>{ try{ const q=cuoCalc(r,C.y); pag+=q.pag; tot+=q.total; }catch(e){} });
   return {pag, tot, monto:C.monto, y:C.y};
 }
@@ -2456,6 +2464,70 @@ function decoAnimar(T){
 }
 
 
+
+// ================= 🔐 PIN por médico (v4.14, app UPC CLBR) =================
+// La sesión (90 días) queda en este celular: localStorage upc-tok = {n, t, e}. pwa.js la manda en cada llamada.
+function tokGet(){ try{ const o=JSON.parse(localStorage.getItem('upc-tok')||'null'); return o&&o.n===S.me&&o.e>Date.now()?o:null; }catch(e){ return null; } }
+function tokSet(n,r){ try{ localStorage.setItem('upc-tok', JSON.stringify({n, t:r.tok, e:Date.now()+(r.dias||90)*864e5})); }catch(e){} }
+function tokBorrar(){ try{ localStorage.removeItem('upc-tok'); }catch(e){} }
+let PIN_P=null;
+// para acciones que el usuario pidió y van por llamadas "de fondo": si falta el PIN, lo pide y reintenta
+async function conPin(f){ try{ return await f(); }catch(e){ if(/^(Error: )?PIN:/.test(String((e&&e.message)||e)) && window.UPC_PWA){ await pinPedir(); return f(); } throw e; } }
+// abre la ventana del PIN una sola vez aunque varias llamadas lo pidan a la vez; resuelve cuando hay sesión
+function pinPedir(){ if(PIN_P) return PIN_P; PIN_P=new Promise((ok,mal)=>pinModal(ok,mal)).finally(()=>{ PIN_P=null; }); return PIN_P; }
+async function pinModal(ok,mal){
+  if(!S.me){ mal(new Error('Elige tu nombre arriba.')); return; }
+  let E={tiene:true,mail:''}; try{ E=await gsj('pinEstado',S.me); }catch(e){}
+  const salir=()=>{ closeModal(); mal(new Error('Sin PIN solo puedes mirar. Para esto necesitas tu PIN.')); };
+  const listo=r=>{ tokSet(S.me,r); closeModal(); toast('🔐 ¡Listo! Este celular te recuerda por 90 días'); ok(); setTimeout(()=>{ try{ cuoCargar(); pushIniciar(); }catch(e){} },300); };
+  const entrar=()=>{ openModal(`<div style="text-align:center;font-size:40px;line-height:1">🔐</div><h3 style="text-align:center">Hola, ${esc(nom(S.me))}</h3>
+      <p class="hint" style="text-align:center">Ingresa tu PIN de 4 números</p>
+      <form id="pinF" autocomplete="on" onsubmit="return false"><input type="text" name="username" autocomplete="username" value="${esc(S.me)}" hidden>
+      <input id="pinIn" class="pinin" type="password" name="password" autocomplete="current-password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••"></form>
+      <div class="row" style="justify-content:center;gap:8px;margin-top:12px"><button class="btn" id="pinNo">Ahora no</button><button class="btn pri" id="pinOk">Entrar</button></div>
+      <p style="text-align:center;margin-top:12px"><button class="lnk" id="pinOlv">¿Olvidaste tu PIN?</button></p>`);
+    const i=$('#pinIn'); setTimeout(()=>i.focus(),100);
+    const go=async()=>{ if(!/^\d{4}$/.test(i.value)) return toast('Son 4 números',1); $('#pinOk').disabled=true;
+      try{ listo(await gsj('pinEntrar',S.me,i.value)); }catch(e){ toast(errMsg(e),1); i.value=''; i.focus(); $('#pinOk').disabled=false; } };
+    $('#pinOk').onclick=go; i.oninput=()=>{ if(i.value.length===4) go(); }; $('#pinNo').onclick=salir; $('#pinOlv').onclick=()=>crear(false); };
+  const crear=(primera)=>{ openModal(`<div style="text-align:center;font-size:40px;line-height:1">🔐</div><h3 style="text-align:center">${primera?'Crea tu PIN':'Nuevo PIN'}</h3>
+      <p class="hint" style="text-align:center">${primera?'Para que nadie pueda anotarse, hacer cambios ni ver tus cosas en tu nombre. Lo creas una vez y este celular te recuerda por 90 días.':'Te mandamos un código para que elijas uno nuevo.'}</p>
+      <div class="pinpaso" id="pinP1">${E.mail?`<button class="btn pri" id="pinEnv" style="width:100%;justify-content:center">📧 Mandar código a ${esc(E.mail)}</button>`:'<div class="cuoal">No tenemos tu mail. Pídele un código a la jefatura.</div>'}
+        <p style="text-align:center;margin-top:10px"><button class="lnk" id="pinTengo">Ya tengo un código${E.mail?' (o me lo dio la jefatura)':''}</button></p></div>
+      <div class="pinpaso" id="pinP2" hidden><label>Código de 6 números<input id="pinCod" class="pinin sm" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······"></label>
+        <form onsubmit="return false"><input type="text" name="username" autocomplete="username" value="${esc(S.me)}" hidden>
+        <label>Tu PIN nuevo (4 números)<input id="pinN1" class="pinin" type="password" name="new-password" autocomplete="new-password" inputmode="numeric" maxlength="4" placeholder="••••"></label>
+        <label>Repítelo<input id="pinN2" class="pinin" type="password" inputmode="numeric" maxlength="4" placeholder="••••"></label></form>
+        <button class="btn pri" id="pinCrear" style="width:100%;margin-top:8px;justify-content:center">Crear PIN</button></div>
+      <div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="pinNo">${E.tiene?'Volver':'Ahora no'}</button></div>`);
+    const paso2=()=>{ $('#pinP1').hidden=true; $('#pinP2').hidden=false; setTimeout(()=>$('#pinCod').focus(),100); };
+    const ev=$('#pinEnv'); if(ev) ev.onclick=async()=>{ ev.disabled=true; ev.textContent='Mandando…'; try{ const r=await gsj('pinPedirCodigo',S.me); toast(`📧 Código enviado a ${r.mail}. Revisa también Spam`); paso2(); }catch(e){ toast(errMsg(e),1); ev.disabled=false; ev.textContent='📧 Mandar código'; } };
+    $('#pinTengo').onclick=paso2;
+    $('#pinCrear').onclick=async()=>{ const c=$('#pinCod').value.replace(/\D/g,''), a=$('#pinN1').value, b=$('#pinN2').value;
+      if(c.length!==6) return toast('El código tiene 6 números',1); if(!/^\d{4}$/.test(a)) return toast('El PIN son 4 números',1); if(a!==b) return toast('Los dos PIN no coinciden',1);
+      $('#pinCrear').disabled=true; try{ listo(await gsj('pinCrear',S.me,c,a)); }catch(e){ toast(errMsg(e),1); $('#pinCrear').disabled=false; } };
+    $('#pinNo').onclick=()=>E.tiene?entrar():salir(); };
+  if(E.tiene) entrar(); else crear(true);
+}
+// cuota del médico con sesión (cuando el PIN es obligatorio no viene en getInit)
+async function cuoCargar(){ if(!window.UPC_PWA || !S.me || (INIT.cuo && INIT.cuo.m && INIT.cuo.m[S.me] && !INIT.cuo.agg)) return;
+  if(!tokGet()) return; try{ INIT.cuo=await gsj('getCuo',S.me); if(S.tab==='mine') render(); else renderUpcoming(); }catch(e){} }
+// 🔐 Panel → PINs de los médicos
+async function pinsModal(){
+  openModal('<h3>🔐 PIN de los médicos</h3><div class="loading">Cargando…</div>');
+  let R; try{ R=await gsj('adminPins',PIN); }catch(e){ openModal(`<h3>🔐 PIN de los médicos</h3><div class="cuoal">${esc(errMsg(e))}</div>`); return; }
+  const M=porApellido((ADMIN.medicos||[]).filter(m=>m.on!==false).map(m=>m.n)), con=M.filter(n=>R.pins[n]);
+  openModal(`<h3>🔐 PIN de los médicos</h3><div class="sub">${con.length} de ${M.length} ya crearon su PIN</div>
+    <div class="card" style="margin:10px 0;padding:12px"><b>PIN obligatorio: ${R.obligatorio?'✅ Sí':'⏸️ No'}</b><p class="hint" style="margin:4px 0 8px">${R.obligatorio?'Sin PIN solo se puede mirar. La app de Google ya no permite anotarse ni hacer cambios: todos tienen que usar UPC CLBR.':'Todavía es opcional: la app de Google sigue funcionando igual. Actívalo el día del lanzamiento.'}</p>
+      <button class="btn${R.obligatorio?'':' pri'}" id="pinObl">${R.obligatorio?'Volver a opcional':'Hacer obligatorio'}</button></div>
+    <div class="pinl">${M.map(n=>`<div class="pinr"><span>${esc(apeNom(n))}</span><span class="sm-dim">${R.pins[n]?'✅ '+esc(String(R.pins[n]).slice(0,10).split('-').reverse().join('/')):'⏳ sin PIN'}</span><button class="btn sm" data-pc="${esc(n)}">Código</button></div>`).join('')}</div>
+    <p class="hint">"Código" genera uno de 6 números que vale 24 horas, para quien no tiene mail o no le llega. Se lo pasas por WhatsApp.</p>`);
+  $('#pinObl').onclick=async()=>{ if(!R.obligatorio && !confirm('¿Hacer obligatorio el PIN? La app de Google deja de permitir anotarse y hacer cambios.')) return; try{ await gsj('adminPinObligatorio',PIN,!R.obligatorio); pinsModal(); }catch(e){ toast(errMsg(e),1); } };
+  $('#modal').querySelectorAll('[data-pc]').forEach(b=>b.onclick=async()=>{ b.disabled=true; try{ const r=await gsj('adminPinCodigo',PIN,b.dataset.pc), n=b.dataset.pc, tel=phoneOf(n);
+      const msg=`¡Hola, ${nom(n)}! Tu código para crear tu PIN en la app UPC CLBR es: ${r.cod}\n\nVale 24 horas. Abre la app, toca "Ya tengo un código" y elige tu PIN de 4 números.`;
+      b.outerHTML=`<b style="font-size:18px;letter-spacing:3px">${r.cod}</b>${tel?`<a class="cuowa" href="https://wa.me/${tel}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_SVG}</a>`:''}`; }catch(e){ toast(errMsg(e),1); b.disabled=false; } });
+}
+
 // ================= 🔔 avisos al celular (solo en la app instalable UPC CLBR) =================
 function pushOK(){ try{ return !!window.UPC_PWA && 'Notification' in window && 'serviceWorker' in navigator && !!window.UPC_FIREBASE && !!UPC_FIREBASE.vapidKey; }catch(e){ return false; } }
 function pushInstalada(){ try{ return matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; }catch(e){ return false; } }
@@ -2472,7 +2544,7 @@ async function pushActivar(btn){
   if(btn){ btn.disabled=true; btn.textContent='Activando…'; }
   try{ const p=await Notification.requestPermission();
     if(p!=='granted'){ toast('No diste permiso. Puedes activarlo después en Ajustes del celular → UPC CLBR → Notificaciones.',1); document.getElementById('pushBar')?.remove(); return; }
-    await pushToken(); document.getElementById('pushBar')?.remove(); toast('🔔 ¡Avisos activados! Te mandé uno de prueba'); gs('pushProbar', S.me).catch(()=>{}); renderUpcoming&&renderUpcoming();
+    await conPin(pushToken); document.getElementById('pushBar')?.remove(); toast('🔔 ¡Avisos activados! Te mandé uno de prueba'); gs('pushProbar', S.me).catch(()=>{}); renderUpcoming&&renderUpcoming();
   }catch(e){ toast('No se pudieron activar los avisos: '+errMsg(e),1); if(btn){ btn.disabled=false; btn.textContent='Activar'; } }
 }
 // tarjeta en Mis turnos (solo app instalable)
@@ -2486,7 +2558,7 @@ function pushCard(){
 function wirePushCard(){
   const a=$('#pushOn'); if(a) a.onclick=async()=>{ await pushActivar(a); if(S.tab==='mine') render(); };
   const t=$('#pushTest'); if(t) t.onclick=async()=>{ t.disabled=true; t.textContent='Programando…';
-    try{ await pushToken(); await gs('pushProbarLuego', S.me); toast('🔒 Bloquea el celular ahora: en unos 30 segundos te llega un aviso de prueba'); t.textContent='✓ Prueba en camino'; }
+    try{ await conPin(pushToken); await gs('pushProbarLuego', S.me); toast('🔒 Bloquea el celular ahora: en unos 30 segundos te llega un aviso de prueba'); t.textContent='✓ Prueba en camino'; }
     catch(e){ toast('No se pudo: '+errMsg(e),1); t.disabled=false; t.textContent='🔒 Probar con el celular bloqueado'; } };
 }
 function pushIniciar(){
@@ -2579,7 +2651,7 @@ function wireWhoExtra(){
 // el nombre también queda en el link (…/exec?yo=…): si se guarda en la pantalla de inicio, no se pierde aunque se borre la memoria del navegador
 function urlYo(n){ try{ google.script.history.replace(null, n?{yo:n}:{}); }catch(e){} }
 function leerUrlYo(){ return new Promise(res=>{ try{ google.script.url.getLocation(l=>res((l&&l.parameter&&l.parameter.yo)||'')); setTimeout(()=>res(''),1500); }catch(e){ res(''); } }); }
-function setMe(n){ S.me=n; S.yearCache=null; S.dispKey=null; S.dispMine=null; S.dispEdit=null; Promise.all([cargarMiDisp(), memoCargar(n)]).then(()=>{ if(S.tab==='mine') render(); else renderUpcoming(); setTimeout(()=>avisoCuota(),400); }); S.prem=null; cargarPremios(); try{ localStorage.setItem('upc-soy',n); }catch(e){} urlYo(n); fillWho(); setTimeout(()=>pingUso(),1500); }
+function setMe(n){ if(n!==S.me) tokBorrar(); S.me=n; S.yearCache=null; S.dispKey=null; S.dispMine=null; S.dispEdit=null; Promise.all([cargarMiDisp(), memoCargar(n)]).then(()=>{ if(S.tab==='mine') render(); else renderUpcoming(); setTimeout(()=>avisoCuota(),400); }); S.prem=null; cargarPremios(); try{ localStorage.setItem('upc-soy',n); }catch(e){} urlYo(n); fillWho(); setTimeout(()=>pingUso(),1500); }
 function cambiarNombre(){
   openModal(`<h3>¿No eres ${esc(nom(S.me))}?</h3><div class="sub">El nombre elegido queda fijo en este dispositivo y resalta tus turnos.</div>
     <div class="mrow"><button class="btn" id="mX">Sí, soy ${esc(nom(S.me))}</button><button class="btn pri" id="chOk">Cambiar de nombre</button></div>`);
@@ -2724,6 +2796,7 @@ function toolTiles(k,W,drafts){
   if(jefe) t(1,'hrs','Horas del mes','Planilla Excel por médico');
   t(1,'log','Registro de cambios', 'Quién cambió qué');
   if(jefe && INIT.asado && INIT.asado.ev){ const R=asadoResumen(); t(1,'asado','Asado UPC', `${R.si.length} van · ${R.tot} personas · ${R.falta.length} faltan`); }
+  if(jefe && window.UPC_PWA) t(1,'pins','PIN de los médicos','Quién creó su PIN · códigos');
   if(jefe){ const U=usoResumen(); t(1,'uso','Uso de la app', U?`${U.sem} de ${U.tot} entraron esta semana${U.nunca?` · ${U.nunca} nunca`:''}`:'Quién entra y cada cuánto'); }
   if(jefe){ const a=ADMIN.auto||{}, ok=['autoRespaldo','autoResumenLunes','autoAvisoFinde','autoAvisoCambios'].every(h=>(a.triggers||[]).includes(h));
     t(1,'auto','Respaldos y avisos', ok?`Último respaldo: ${a.ultimo||'—'}`:'Falta activarlos', ok?'':'warn', !ok); }
@@ -2743,6 +2816,7 @@ function abrirTool(id){
   if(id==='eq') return equidadModal();
   if(id==='log') return verRegistro();
   if(id==='uso') return usoModal();
+  if(id==='pins') return pinsModal();
   if(id==='asado') return asadoModal();
   if(id==='fest') return festModal();
   if(id==='f2') return findeDosBloques();
@@ -3730,6 +3804,7 @@ async function boot(){
     preloadNow();
     setTimeout(()=>avisoCuota(),600);
     setTimeout(()=>{ try{ pushIniciar(); }catch(e){} },3500);
+    setTimeout(()=>{ try{ if(!INIT.cuo) cuoCargar(); }catch(e){} },800);
     setTimeout(()=>cargarPremios(),900);
     setTimeout(()=>pingUso(),1500);
     let skip=false; try{ skip=!!localStorage.getItem('upc-soy-skip'); }catch(e){}
