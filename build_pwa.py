@@ -11,6 +11,7 @@ head = '''<meta name="theme-color" content="#151B23">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-32.png">
+<script src="firebase-config.js"></script>
 <script src="pwa.js"></script>
 <style>/* iPhone con la app instalada: la banda oscura llega hasta arriba, detrás de la hora y la batería */
 .band{padding-top:env(safe-area-inset-top)} .band.tband .tgar{top:env(safe-area-inset-top)} .tscene,.tcruza{margin-top:env(safe-area-inset-top)}</style>
