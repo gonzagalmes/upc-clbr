@@ -48,7 +48,7 @@
   function guia(){
     css(); var pasos;
     if (ios && !safari) pasos = '<div class="warn">⚠️ Estás en el navegador de otra app. Para instalarla, ábrela en <b>Safari</b>: toca <b>⋯</b> o <b>⬆️</b> y elige <b>"Abrir en Safari"</b>.</div>';
-    else if (ios) pasos = '<ol><li><i>1</i><span>Toca <b>Compartir</b> ⬆️ (abajo, en la barra de Safari).</span></li><li><i>2</i><span>Baja un poco y toca <b>"Agregar a pantalla de inicio"</b>.</span></li><li><i>3</i><span>Toca <b>Agregar</b> arriba a la derecha.</span></li><li><i>4</i><span>Abre <b>UPC CLBR</b> desde el ícono nuevo y permite las notificaciones.</span></li></ol>';
+    else if (ios) pasos = '<ol><li><i>1</i><span>Toca <b>Compartir</b> ⬆️ (abajo, en la barra de Safari).</span></li><li><i>2</i><span>Baja un poco y toca <b>"Agregar a pantalla de inicio"</b>.</span></li><li><i>3</i><span>Toca <b>Agregar</b> arriba a la derecha.</span></li><li><i>4</i><span>Abre <b>UPC CLBR</b> desde el ícono nuevo.</span></li></ol>';
     else pasos = '<ol><li><i>1</i><span>En Chrome, toca <b>⋮</b> (arriba a la derecha).</span></li><li><i>2</i><span>Toca <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b>.</span></li><li><i>3</i><span>Confirma <b>Instalar</b> y ábrela desde el ícono nuevo.</span></li></ol>';
     var g=document.createElement('div'); g.id='instGuia'; g.innerHTML='<div class="c"><h3>📲 Instala UPC CLBR</h3><div style="color:#5A6573">Queda como una app más en tu celular, recuerda tu sesión y te avisa de turnos nuevos.</div>'+pasos+'<button class="si ok">Entendido</button></div>';
     g.onclick=function(e){ if(e.target===g || e.target.classList.contains('ok')) g.remove(); }; document.body.appendChild(g);

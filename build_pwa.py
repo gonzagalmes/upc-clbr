@@ -6,12 +6,14 @@ src = open(sys.argv[1], encoding='utf-8').read()
 head = '''<meta name="theme-color" content="#151B23">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="UPC CLBR">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-32.png">
 <script src="pwa.js"></script>
+<style>/* iPhone con la app instalada: la banda oscura llega hasta arriba, detrás de la hora y la batería */
+.band{padding-top:env(safe-area-inset-top)} .band.tband .tgar{top:env(safe-area-inset-top)} .tscene,.tcruza{margin-top:env(safe-area-inset-top)}</style>
 '''
 assert src.count('<title>Turnos UPC</title>') == 1
 out = src.replace('<title>Turnos UPC</title>', '<title>UPC CLBR</title>\n' + head, 1)
