@@ -14,7 +14,7 @@ head = '''<meta name="theme-color" content="#151B23">
 <script src="firebase-config.js"></script>
 <script src="pwa.js"></script>
 <style>/* iPhone con la app instalada: la banda oscura llega hasta arriba, detrás de la hora y la batería */
-.band{padding-top:env(safe-area-inset-top)} .band.tband .tgar{top:env(safe-area-inset-top)} .tscene,.tcruza{margin-top:env(safe-area-inset-top)}</style>
+html{background:#151B23} body{min-height:100vh} .band{padding-top:env(safe-area-inset-top)} .band.tband .tgar{top:env(safe-area-inset-top)} .tscene,.tcruza{margin-top:env(safe-area-inset-top)}</style>
 '''
 assert src.count('<title>Turnos UPC</title>') == 1
 out = src.replace('<title>Turnos UPC</title>', '<title>UPC CLBR</title>\n' + head, 1)
