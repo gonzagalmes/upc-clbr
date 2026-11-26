@@ -755,6 +755,7 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
   .semm .btn{grid-area:b}
 
 
+.pushc{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap} .pushc b{display:block;font-size:15px} .pushc .sm-dim{display:block;margin-top:2px}
 #pushBar{position:fixed;left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:58;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:12px;display:flex;gap:10px;align-items:center;font-size:14px;max-width:520px;margin:0 auto}
 #pushBar b{display:block;font-size:15px} #pushBar span{color:var(--dim);font-size:13px;line-height:1.3;display:block} #pushBar .x{display:flex;gap:6px}
 #pushBar button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 12px;cursor:pointer;white-space:nowrap} #pushBar .si{background:#0064B0;color:#fff} #pushBar .no{background:var(--line);color:var(--fg)}
@@ -840,7 +841,7 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 
 <script>
 window.__appStarted=true;
-const APP_V='4.13.0';
+const APP_V='4.13.1';
 
 // ================= memoria en la planilla (v4.6) =================
 // En el iPhone, Safari borra la memoria del navegador de la app al cerrarse (la app vive dentro de un marco de Google).
@@ -1242,7 +1243,7 @@ async function renderMine(){
       ${hechas>0&&hechas<tot?`<div class="mmd">✅ Hechas <b>${hechas} h</b> · ⏳ te faltan <b>${tot-hechas} h</b></div>`:''}
     </div>
     <button class="calcta" id="calGo"><span class="ce">📅</span><span><b>Agregar mis turnos a mi calendario</b><small>iPhone o Google: se actualizan solos</small></span><span class="ca">›</span></button>`;
-  $('#view').innerHTML=head+miDispCard()+mimes+rankingCard(k)+cuotaCard()+`
+  $('#view').innerHTML=head+pushCard()+miDispCard()+mimes+rankingCard(k)+cuotaCard()+`
     <div class="card">
       <div class="list">${L.length?L.map(x=>`<div class="li${x.past?' past':''}${x===nx?' next':''}"><span class="d">${fmtD(x.i)}</span><span class="u" style="background:var(--${x.u})">${UNITS[x.u]}</span><span>${faltaTag(x, x===nx)}<span class="hh">${x.a} a ${x.fin}</span>${x.s?` <span class="sm-dim">sector ${esc(x.s)}</span>`:''}${F[x.i]?'<span class="tag fest">festivo</span>':''}${x.ref?'<span class="tag ref">refuerzo</span>':''}${reemplazoHtml(k,x,L.indexOf(x))}</span><span class="sm-dim act">${x.horas} h</span></div>`).join(''):'<div class="empty">No tienes turnos este mes.</div>'}</div>
     </div>
@@ -1250,7 +1251,7 @@ async function renderMine(){
     <div class="card"><h3>Horas por mes en ${y}</h3><div id="yearBox" class="loading" style="padding:10px 0">Calculando…</div></div>`;
   wireYm('mm',list,v=>{S.mineYm=v; render();});
   $('#view').querySelectorAll('[data-rq]').forEach(b=>b.onclick=()=>pedirModal(L[+b.dataset.rq]));
-  const mdb=$('#miDispB'); if(mdb) mdb.onclick=()=>miDispModal(); wireCuota();
+  const mdb=$('#miDispB'); if(mdb) mdb.onclick=()=>miDispModal(); wireCuota(); wirePushCard();
   $('#view').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>deshacerModal(L[+b.dataset.undo]));
   wireCal2(k, L);
   const cg=$('#calGo'); if(cg) cg.onclick=()=>{ const c=$('#view .calc'); if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),1600); } };
@@ -2473,6 +2474,20 @@ async function pushActivar(btn){
     if(p!=='granted'){ toast('No diste permiso. Puedes activarlo después en Ajustes del celular → UPC CLBR → Notificaciones.',1); document.getElementById('pushBar')?.remove(); return; }
     await pushToken(); document.getElementById('pushBar')?.remove(); toast('🔔 ¡Avisos activados! Te mandé uno de prueba'); gs('pushProbar', S.me).catch(()=>{}); renderUpcoming&&renderUpcoming();
   }catch(e){ toast('No se pudieron activar los avisos: '+errMsg(e),1); if(btn){ btn.disabled=false; btn.textContent='Activar'; } }
+}
+// tarjeta en Mis turnos (solo app instalable)
+function pushCard(){
+  if(!pushOK()) return '';
+  const p=Notification.permission;
+  const txt=p==='granted'?'✅ Activados en este celular':p==='denied'?'⛔ Bloqueados. Actívalos en Ajustes del celular → Notificaciones → UPC CLBR.':'Te avisamos de turnos disponibles, cambios aprobados y novedades.';
+  const bt=p==='granted'?'<button class="btn" id="pushTest">🔒 Probar con el celular bloqueado</button>':p==='default'?'<button class="btn pri" id="pushOn">Activar</button>':'';
+  return `<div class="card pushc"><div><b>🔔 Avisos al celular</b><span class="sm-dim">${txt}</span></div>${bt}</div>`;
+}
+function wirePushCard(){
+  const a=$('#pushOn'); if(a) a.onclick=async()=>{ await pushActivar(a); if(S.tab==='mine') render(); };
+  const t=$('#pushTest'); if(t) t.onclick=async()=>{ t.disabled=true; t.textContent='Programando…';
+    try{ await pushToken(); await gs('pushProbarLuego', S.me); toast('🔒 Bloquea el celular ahora: en unos 30 segundos te llega un aviso de prueba'); t.textContent='✓ Prueba en camino'; }
+    catch(e){ toast('No se pudo: '+errMsg(e),1); t.disabled=false; t.textContent='🔒 Probar con el celular bloqueado'; } };
 }
 function pushIniciar(){
   if(!pushOK() || !S.me) return;
