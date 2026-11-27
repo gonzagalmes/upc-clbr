@@ -3786,6 +3786,7 @@ async function descargar(k,u,tipo){
 async function render(){
   setUnitVars(S.unit);
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected', String(b.dataset.tab===S.tab)));
+  if(!INIT) return;   // todavía cargando: se recuerda la pestaña elegida y se dibuja cuando llegan los datos
   const pc=$('#pendCnt'); const n=agruparPend(INIT.pend||[]).length; pc.textContent=n; pc.hidden=!n;
   const cq=miCuota(), cc=$('#cuoCnt'); if(cc) cc.hidden=!(cq&&cq.deudaTot);
   const av=avisosJefe(), ac=$('#admCnt'), nC=cambiosN(); if(ac){ ac.hidden=!((av&&av.tot)||nC); if(av) ac.title=av.txt; ac.textContent=nC?`🔄 ${nC}`:'!'; ac.classList.toggle('cmbig',!!nC); if(nC) ac.title=`${nC} ${plural(nC,'cambio','cambios')} para visar`; }
