@@ -349,6 +349,14 @@ tbody tr:last-child td{border-bottom:0}
 @media (max-width:600px){table{min-width:0}th,td{padding:7px 8px}}
 @media (prefers-reduced-motion:reduce){.btn,.pn a,.row{transition:none}.btn:hover,.pn a:hover{transform:none}}
 
+/* UPC CLBR: en el celular el subtítulo baja entero bajo el título (no choca con los botones) y "‹ App" se destaca */
+.hbtn.back{background:#fff;color:#0b2a4d;border-color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hbtn.back:hover{background:#e3f0fa}
+@media (max-width:900px){.brand{grid-column:1 / -1;grid-row:1}.brand b{padding-right:150px}.actions{grid-column:2;grid-row:1;align-self:start}.brand span{white-space:normal}}
+.chapter{overflow-wrap:break-word}
+@media (max-width:900px){html{scroll-padding-top:calc(var(--hdr,170px) + 12px)}}
+@media (max-width:480px){.tl::before{left:52px}.tl>li{grid-template-columns:48px minmax(0,1fr);gap:16px}.tl>li::before{left:47px}.tl .h{font-size:11.5px}}
+@media (max-width:480px){.brand b{padding-right:140px}.brand span{font-size:10.5px;letter-spacing:.06em}}
 </style>
 </head>
 <body>
@@ -377,7 +385,7 @@ tbody tr:last-child td{border-bottom:0}
     </div>
     <div class="actions">
       <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="toc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menú</button>
-      <div class="who"><span id="userName"></span></div><a class="hbtn" href="./" style="text-decoration:none" aria-label="Volver a UPC CLBR">‹ App</a>
+      <div class="who"><span id="userName"></span></div><a class="hbtn back" href="./" style="text-decoration:none" aria-label="Volver a UPC CLBR">‹ App</a>
     </div>
   </div>
 </header>
@@ -421,6 +429,7 @@ function pintar(r){
   const h=location.hash; $('chapters').innerHTML=r.html;
   $('userName').textContent=r.nombre||'';
   mostrar('app'); initManual(); if(h&&location.hash!==h)location.hash=h;
+  const hdr=()=>document.documentElement.style.setProperty('--hdr',$('topbar').getBoundingClientRect().bottom+'px'); hdr(); addEventListener('resize',hdr);
 }
 function cargarManual(){
   const o=sesion();
