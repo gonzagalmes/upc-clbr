@@ -2477,12 +2477,20 @@ function renderRec(){
   const it=(id,ico,t,d,href)=>href?`<a class="recb" id="${id}" href="${href}" ${/^https?:/.test(href)?'target="_blank" rel="noopener"':''}><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></a>`
     :`<button class="recb" id="${id}"><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></button>`;
   $('#view').innerHTML=`<div class="card"><h3>📚 Recursos de la UPC</h3><div class="recl">
-      ${it('recMan','📖','Manual del residente','Guía de la UPC para el turno',RECURSOS.manual)}
+      ${it('recMan','📖','Manual del residente','Guía de la UPC para el turno',window.UPC_PWA?null:RECURSOS.manual)}
       ${it('recAis','🦠','Aislamientos','Qué precaución y por cuánto tiempo, según el germen',RECURSOS.aisl)}
       ${it('recIC','📞','Rol de llamado','Interconsultores de turno hoy')}
       ${it('recTut','ℹ️','Tutorial','Cómo usar la app y qué significa cada color')}
     </div></div>${pushCard()}`;
   $('#recIC').onclick=()=>icModal(); $('#recTut').onclick=()=>tutorial(0); wirePushCard();
+  if(window.UPC_PWA) $('#recMan').onclick=()=>abrirManual();
+}
+// el manual usa la sesión del PIN: antes de abrirlo se confirma que sigue vigente (si no, pide el PIN acá mismo)
+async function abrirManual(){
+  if(!S.me){ pickName(); return; }
+  const b=$('#recMan'); if(b){ b.disabled=true; b.querySelector('small').textContent='Abriendo…'; }
+  try{ await conPin(()=>gs('getMemo',S.me)); location.href='manual.html'; }
+  catch(e){ toast(errMsg(e)); if(b){ b.disabled=false; b.querySelector('small').textContent='Guía de la UPC para el turno'; } }
 }
 
 // ================= 🔐 PIN por médico (v4.14, app UPC CLBR) =================
@@ -3824,6 +3832,7 @@ async function boot(){
     preloadNow();
     setTimeout(()=>avisoCuota(),600);
     setTimeout(()=>{ try{ pushIniciar(); }catch(e){} },3500);
+    try{ const q=new URLSearchParams(location.search); if(q.get('manual')==='1'){ q.delete('manual'); history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash); S.tab='rec'; await render(); setTimeout(()=>abrirManual(),300); } }catch(e){}
     setTimeout(()=>{ try{ if(!INIT.cuo) cuoCargar(); }catch(e){} },800);
     setTimeout(()=>cargarPremios(),900);
     setTimeout(()=>pingUso(),1500);
