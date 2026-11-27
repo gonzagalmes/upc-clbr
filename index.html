@@ -484,7 +484,7 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 @keyframes titila{0%,55%,100%{opacity:1}70%{opacity:.25}}
 @media (prefers-reduced-motion: no-preference){ .cuoban.alarma{animation:alarmaB 1.4s ease-out infinite} .cuoban .ico,.cuoal .ico,.tabs .cnt.alarm{animation:titila 1.1s steps(1,end) infinite} }
 .qr .hh .ft{font-family:var(--f-body);margin-left:8px;font-size:12px;color:inherit;opacity:.85;font-weight:500;white-space:nowrap}.qr .hh .ft.h24{opacity:1;font-weight:800;background:rgba(0,0,0,.22);padding:1px 6px;border-radius:6px}
-.who{flex-wrap:wrap; row-gap:8px} .whobr{display:none} @media (max-width:760px){ .whobr{display:block; flex-basis:100%; height:0} } .who b{white-space:nowrap} .whoch,.whoref{white-space:nowrap; flex:0 0 auto}
+.who{flex-wrap:wrap; row-gap:8px} @media (max-width:380px){ .who{gap:6px} .who .whoref{padding:3px 6px} .who .whoch{padding:4px 7px} } .whobr{display:none} @media (max-width:760px){ .whobr{display:block; flex-basis:100%; height:0} } .who b{white-space:nowrap} .whoch,.whoref{white-space:nowrap; flex:0 0 auto}
 .whoref.tut{display:inline-flex;align-items:center;gap:4px}.whoref.tut small{font-size:11px;font-weight:600;letter-spacing:.02em}
 .whoref{background:none; border:1px solid #344050; border-radius:8px; color:var(--ink-dim); font-size:14px; padding:3px 8px; line-height:1}
 .cuoban{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; background:#3A1A1D; border:1px solid #8A3138; color:#FFD9DB; border-radius:12px; padding:10px 14px; font-size:14px; margin-top:10px}
@@ -802,6 +802,9 @@ button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;c
 .brand h1{position:relative}
 .that{position:absolute; pointer-events:none; z-index:2; left:-14px; top:-24px; width:48px; transform:rotate(-14deg)}
 .that svg{width:100%; height:auto; display:block; filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+/* celular: la escena y lo que cruza quedan a la derecha (no detrás del título), el gorro apenas apoyado y el texto con sombra para leerse sobre la nieve */
+.brand h1,.brand p{text-shadow:0 1px 8px rgba(0,0,0,.55)}
+@media (max-width:760px){ .that{top:-25px; left:-15px; width:40px} }
 .th-chupalla,.th-sombrero{width:62px; left:-18px; top:-16px; transform:rotate(-10deg)}
 .th-bruja{width:58px; top:-34px} .th-orejas{width:44px; top:-36px; left:-4px; transform:rotate(-8deg)}
 .th-casco,.th-marinero{width:50px; top:-18px} .th-corona{width:40px; top:-24px; left:-8px}
@@ -817,7 +820,7 @@ button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;c
 .tsal.especial .tart{width:46px; flex-basis:46px}
 .tquieta .tcruza,.tquieta .tgar.luces i,.tquieta .tecg,.tquieta .tola,.tquieta .tfl path{animation:none!important}
 .tquieta .tecg{stroke-dashoffset:0}
-@media (max-width:760px){ .tscene{width:78%; height:100px; opacity:.5} .ts-medico{width:100%; height:60px} .tcruza span{font-size:24px} }
+@media (max-width:760px){ .tscene{width:calc(100% - 248px); min-width:84px; height:104px; opacity:.45} .ts-medico{width:100%; height:60px} .tcruza{left:248px} .tcruza span{font-size:21px} }
 @media (prefers-reduced-motion: reduce){ .tgar.luces i,.tcruza span,.tecg,.tola,.tfl path{animation:none} .tecg{stroke-dashoffset:0} }
 </style>
 </head>
@@ -2605,8 +2608,8 @@ function pushIniciar(){
 // ================= elegir nombre =================
 function fillWho(){
   const box=$('#whoBox');
-  const extra=`<button class="whoref tut ic" id="whoIC" title="Interconsultores de llamado" aria-label="Interconsultores de llamado"><span>📞</span><small>Rol de llamado</small></button><button class="whoref tut" id="whoTut" title="Cómo se usa la app" aria-label="Tutorial"><span>ℹ️</span><small>Tutorial</small></button><button class="whoref" id="whoTema" title="${temaTxt()}" aria-label="Tema">${temaIco()}</button>${decoBtn()}`;
-  if(S.me){ box.innerHTML=`Soy <b>${esc(nom(S.me))}</b><button class="whoch" id="whoCh">No soy yo</button><span class="whobr"></span>${extra}<button class="whoref" id="whoRef" title="Traer lo último" aria-label="Actualizar">↻</button>`; $('#whoCh').onclick=cambiarNombre; $('#whoRef').onclick=()=>refrescar(true); wireWhoExtra(); return; }
+  const extra=`<button class="whoref" id="whoTema" title="${temaTxt()}" aria-label="Tema">${temaIco()}</button>${decoBtn()}`;
+  if(S.me){ box.innerHTML=`Soy <b>${esc(nom(S.me))}</b><button class="whoch" id="whoCh">No soy yo</button>${extra}<button class="whoref" id="whoRef" title="Traer lo último" aria-label="Actualizar">↻</button>`; $('#whoCh').onclick=cambiarNombre; $('#whoRef').onclick=()=>refrescar(true); wireWhoExtra(); return; }
   box.innerHTML=`<label for="who">Soy</label> <select id="who"><option value="">— elige —</option>${porApellido(INIT.medicos.map(m=>m.n)).map(n=>`<option value="${esc(n)}">${esc(apeNom(n))}</option>`).join('')}</select>`;
   box.insertAdjacentHTML('beforeend', extra); wireWhoExtra();
   $('#who').onchange=e=>{ if(e.target.value){ setMe(e.target.value); render(); } };
@@ -2647,7 +2650,7 @@ function tutorial(k){
   const C=[
     ['👋','¡Bienvenido a UPC CLBR!',`<p>Arriba ves <b>quién está de turno hoy</b> en cada unidad: el tramo de ahora va en blanco. En el celular, desliza para pasar de UCI a UTI A y UTI B.</p>
       <div class="tg2"><span>☀️ Mañana / Día</span><span>🌇 Tarde</span><span>🌙 Noche</span><span>↪ "sigue…" = continúa</span></div>
-      <p>En el calendario, el botón <b>👥</b> de cada día muestra quién está en las 3 unidades.</p>`],
+      <p>En el calendario, el botón <b>👥</b> de cada día muestra quién está en las 3 unidades. Arriba: 🌓 tema claro u oscuro y ↻ para traer lo último.</p>`],
     ['🎨','Los colores del calendario',`<div class="tleg">
       <span><i style="background:var(--uci)"></i>UCI</span><span><i style="background:var(--utia)"></i>UTI A</span><span><i style="background:var(--utib)"></i>UTI B</span>
       <span><i style="background:var(--me)"></i>Tus turnos (con "Resaltar solo mis turnos")</span>
@@ -2655,12 +2658,20 @@ function tutorial(k){
       <span><i style="background:var(--rojo)"></i>Por cubrir: ¡anótate!</span><span><i style="background:var(--cel)"></i>Busca reemplazo</span>
       <span><i style="background:var(--fest-bg);border:2px solid var(--fest)"></i>Festivo</span></div>`],
     ['✋','Anotarte y cambiar turnos',`<p><b>Anotarse:</b> ahí están los turnos libres; toca el que quieras y listo.</p>
-      <p><b>¿Cambiaste con un colega?</b> Toca tu turno → "Ya lo acordé con un colega" → elige quién. Queda hecho al instante.</p>
-      <p><b>¿No tienes a nadie?</b> Toca tu turno → "Pedir reemplazo".</p>
-      <p><b>📅 Mis turnos</b> → "Agregar mis turnos a mi calendario" para tenerlos en el iPhone o Google.</p>`],
-    ['🆕','Lo nuevo',`<p><b>📞 Rol de llamado</b> (arriba): qué especialista está de llamado hoy, por especialidad, y el PDF completo del mes.</p>
-      <p><b>🗓️ Mi disponibilidad</b> (en Mis turnos): ves tus turnos de los próximos meses y marcas con tiempo los que no vas a poder.</p>
-      <p><b>¿Quieres pasar solo una parte?</b> Al tocar un turno de día y noche puedes elegir pasar solo el día o solo la noche, incluso si tu turno ya empezó.</p>`]];
+      <p><b>¿Cambiaste con un colega?</b> Toca tu turno → "Ya lo acordé con un colega" → elige quién. Queda hecho al instante y la jefatura lo visa.</p>
+      <p><b>¿No tienes a nadie?</b> Toca tu turno → "Pedir reemplazo". Cuando la jefatura lo aprueba, a todos les llega el aviso 🔵.</p>
+      <p>Si tu turno es de día y noche, puedes pasar solo una parte, incluso si ya empezó.</p>`],
+    ['📅','Mis turnos',`<p>Tus próximos turnos, las horas del mes y del año, el 🏆 ranking y tus medallas.</p>
+      <p><b>🗓️ Mi disponibilidad</b> (si tienes horario fijo): marca con tiempo los turnos de los próximos meses que no vas a poder.</p>
+      <p><b>Agregar mis turnos a mi calendario:</b> para tenerlos en el iPhone o en Google.</p>
+      <p>También tu <b>cuota</b> del fondo común y cómo pagarla.</p>`],
+    ['🔐','Tu PIN y los avisos',`<p><b>PIN de 4 números:</b> se pide para lo personal (anotarte, cambios, tu cuota). Este celular te recuerda 90 días. ¿Lo olvidaste? "¿Olvidaste tu PIN?" te manda un código al mail.</p>
+      <p><b>🔔 Avisos al celular</b> (con la app instalada en el inicio): turnos disponibles, tus cambios aprobados, cumpleaños 🎂 y un <b>recordatorio 24 h y 12 h antes</b> de los turnos que tomas fuera de tu horario habitual.</p>`],
+    ['📚','Recursos',`<p>En la pestaña <b>📚 Recursos</b>:</p>
+      <p><b>📖 Manual del residente</b>: la guía de la UPC, con buscador y checklists. Se abre dentro de la app con tu PIN.</p>
+      <p><b>🦠 Aislamientos</b>: qué precaución y por cuánto tiempo, según el germen.</p>
+      <p><b>📞 Rol de llamado</b>: qué especialista está de llamado hoy y el PDF del mes.</p>
+      <p><b>ℹ️ Tutorial</b>: esta guía, cuando quieras.</p>`]];
   const [e,t,b]=C[k];
   openModal(`<div class="tut"><div class="te">${e}</div><h3>${t}</h3>${b}</div>
     <div class="tdots">${C.map((_,j)=>`<i class="${j===k?'on':''}"></i>`).join('')}</div>

@@ -20,8 +20,7 @@ assert src.count('<title>Turnos UPC</title>') == 1
 out = src.replace('<title>Turnos UPC</title>', '<title>UPC CLBR</title>\n' + head, 1)
 out = out.replace('content="width=device-width, initial-scale=1.0"', 'content="width=device-width, initial-scale=1.0, viewport-fit=cover"', 1)
 for a, b in [('<div><h1>Turnos UPC</h1><p>Clínica Bupa Reñaca</p></div>', '<div><h1>UPC CLBR</h1><p>Turnos · Clínica Bupa Reñaca</p></div>'),
-             ("`Turnos UPC · versión ${APP_V}`", "`UPC CLBR · versión ${APP_V}`"),
-             ("'¡Bienvenido a Turnos UPC!'", "'¡Bienvenido a UPC CLBR!'")]:
+             ("`Turnos UPC · versión ${APP_V}`", "`UPC CLBR · versión ${APP_V}`")]:
     assert out.count(a) == 1, a
     out = out.replace(a, b)
 open('index.html', 'w', encoding='utf-8').write(out)
