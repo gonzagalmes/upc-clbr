@@ -2472,7 +2472,7 @@ function decoAnimar(T){
 
 
 // ================= 📚 Recursos: manual, aislamientos, rol de llamado, tutorial, avisos =================
-const RECURSOS={ manual:'https://tinyurl.com/manual-upc', aisl:(window.UPC_PWA?'':'https://gonzagalmes.github.io/upc-clbr/')+'aislamientos.html' };
+const RECURSOS={ manual:window.UPC_PWA?'manual.html':'https://tinyurl.com/manual-upc', aisl:(window.UPC_PWA?'':'https://gonzagalmes.github.io/upc-clbr/')+'aislamientos.html' };
 function renderRec(){
   const it=(id,ico,t,d,href)=>href?`<a class="recb" id="${id}" href="${href}" ${/^https?:/.test(href)?'target="_blank" rel="noopener"':''}><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></a>`
     :`<button class="recb" id="${id}"><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></button>`;
