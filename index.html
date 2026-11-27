@@ -97,7 +97,7 @@ a{color:inherit}
 .tabs .tico{margin-right:6px}
 @media (max-width: 760px){
   .tabsbar{position:fixed; top:auto; bottom:0; left:0; right:0; z-index:40; border-bottom:none; border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-  .tabsbar .tabs{display:grid; grid-template-columns:repeat(4,1fr); gap:0; overflow:visible; padding:0}
+  .tabsbar .tabs{display:grid; grid-template-columns:repeat(5,1fr); gap:0; overflow:visible; padding:0}
   .tabs button{position:relative; display:flex; flex-direction:column; align-items:center; gap:1px; padding:7px 2px 6px; font-size:11px; border-bottom:none; border-top:3px solid transparent}
   .tabs button[aria-selected="true"]{border-top-color:var(--fg)}
   .tabs .tico{font-size:22px; line-height:1; margin:0}
@@ -765,6 +765,10 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 .pinpaso label{display:block;font-size:13px;font-weight:700;color:var(--dim);text-align:center;margin-top:10px}
 button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
 .pinl{display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:auto} .pinr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line)}
+
+.recl{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.recb{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px;text-decoration:none;cursor:pointer}
+.recb:hover{border-color:var(--fg)} .recb .ri{font-size:30px;width:40px;text-align:center} .recb b{display:block;font-size:16px} .recb small{display:block;color:var(--dim);font-size:13px;margin-top:2px} .recb .rf{margin-left:auto;font-size:24px;color:var(--dim)}
 /* 🎄 decoración por temporada */
 #decoCv{position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:30}
 .band.tband{position:relative; overflow:hidden}
@@ -836,6 +840,7 @@ button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;c
   <button role="tab" data-tab="cal" aria-selected="true"><span class="tico">📅</span><span class="tl">Calendario</span></button>
   <button role="tab" data-tab="mine" aria-selected="false"><span class="tico">🗓️</span><span class="tl">Mis turnos</span><span class="cnt alarm" id="cuoCnt" hidden title="Debes cuotas">!</span></button>
   <button role="tab" data-tab="sign" aria-selected="false"><span class="tico">✋</span><span class="tl">Anotarse</span><span class="cnt" id="pendCnt" hidden>0</span></button>
+  <button role="tab" data-tab="rec" aria-selected="false"><span class="tico">📚</span><span class="tl">Recursos</span></button>
   <button role="tab" data-tab="admin" aria-selected="false"><span class="tico">👮</span><span class="tl">Panel<span class="tlx"> jefe</span></span><span class="cnt alarm" id="admCnt" hidden title="Hay algo para revisar">!</span></button>
 </nav></div>
 <main id="view" class="in"><div class="loading">Cargando turnos…</div></main>
@@ -847,7 +852,7 @@ button.lnk{border:0;background:none;color:#2D78C4;font:inherit;font-weight:700;c
 
 <script>
 window.__appStarted=true;
-const APP_V='4.15.0';
+const APP_V='4.16.0';
 
 // ================= memoria en la planilla (v4.6) =================
 // En el iPhone, Safari borra la memoria del navegador de la app al cerrarse (la app vive dentro de un marco de Google).
@@ -1250,7 +1255,7 @@ async function renderMine(){
       ${hechas>0&&hechas<tot?`<div class="mmd">✅ Hechas <b>${hechas} h</b> · ⏳ te faltan <b>${tot-hechas} h</b></div>`:''}
     </div>
     <button class="calcta" id="calGo"><span class="ce">📅</span><span><b>Agregar mis turnos a mi calendario</b><small>iPhone o Google: se actualizan solos</small></span><span class="ca">›</span></button>`;
-  $('#view').innerHTML=head+pushCard()+miDispCard()+mimes+rankingCard(k)+cuotaCard()+`
+  $('#view').innerHTML=head+miDispCard()+mimes+rankingCard(k)+cuotaCard()+`
     <div class="card">
       <div class="list">${L.length?L.map(x=>`<div class="li${x.past?' past':''}${x===nx?' next':''}"><span class="d">${fmtD(x.i)}</span><span class="u" style="background:var(--${x.u})">${UNITS[x.u]}</span><span>${faltaTag(x, x===nx)}<span class="hh">${x.a} a ${x.fin}</span>${x.s?` <span class="sm-dim">sector ${esc(x.s)}</span>`:''}${F[x.i]?'<span class="tag fest">festivo</span>':''}${x.ref?'<span class="tag ref">refuerzo</span>':''}${reemplazoHtml(k,x,L.indexOf(x))}</span><span class="sm-dim act">${x.horas} h</span></div>`).join(''):'<div class="empty">No tienes turnos este mes.</div>'}</div>
     </div>
@@ -1258,7 +1263,7 @@ async function renderMine(){
     <div class="card"><h3>Horas por mes en ${y}</h3><div id="yearBox" class="loading" style="padding:10px 0">Calculando…</div></div>`;
   wireYm('mm',list,v=>{S.mineYm=v; render();});
   $('#view').querySelectorAll('[data-rq]').forEach(b=>b.onclick=()=>pedirModal(L[+b.dataset.rq]));
-  const mdb=$('#miDispB'); if(mdb) mdb.onclick=()=>miDispModal(); wireCuota(); wirePushCard();
+  const mdb=$('#miDispB'); if(mdb) mdb.onclick=()=>miDispModal(); wireCuota();
   $('#view').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>deshacerModal(L[+b.dataset.undo]));
   wireCal2(k, L);
   const cg=$('#calGo'); if(cg) cg.onclick=()=>{ const c=$('#view .calc'); if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),1600); } };
@@ -2465,6 +2470,21 @@ function decoAnimar(T){
 
 
 
+
+// ================= 📚 Recursos: manual, aislamientos, rol de llamado, tutorial, avisos =================
+const RECURSOS={ manual:'https://tinyurl.com/manual-upc', aisl:(window.UPC_PWA?'':'https://gonzagalmes.github.io/upc-clbr/')+'aislamientos.html' };
+function renderRec(){
+  const it=(id,ico,t,d,href)=>href?`<a class="recb" id="${id}" href="${href}" ${/^https?:/.test(href)?'target="_blank" rel="noopener"':''}><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></a>`
+    :`<button class="recb" id="${id}"><span class="ri">${ico}</span><span><b>${t}</b><small>${d}</small></span><span class="rf">›</span></button>`;
+  $('#view').innerHTML=`<div class="card"><h3>📚 Recursos de la UPC</h3><div class="recl">
+      ${it('recMan','📖','Manual del residente','Guía de la UPC para el turno',RECURSOS.manual)}
+      ${it('recAis','🦠','Aislamientos','Qué precaución y por cuánto tiempo, según el germen',RECURSOS.aisl)}
+      ${it('recIC','📞','Rol de llamado','Interconsultores de turno hoy')}
+      ${it('recTut','ℹ️','Tutorial','Cómo usar la app y qué significa cada color')}
+    </div></div>${pushCard()}`;
+  $('#recIC').onclick=()=>icModal(); $('#recTut').onclick=()=>tutorial(0); wirePushCard();
+}
+
 // ================= 🔐 PIN por médico (v4.14, app UPC CLBR) =================
 // La sesión (90 días) queda en este celular: localStorage upc-tok = {n, t, e}. pwa.js la manda en cada llamada.
 function tokGet(){ try{ const o=JSON.parse(localStorage.getItem('upc-tok')||'null'); return o&&o.n===S.me&&o.e>Date.now()?o:null; }catch(e){ return null; } }
@@ -2552,11 +2572,11 @@ function pushCard(){
   if(!pushOK()) return '';
   const p=Notification.permission;
   const txt=p==='granted'?'✅ Activados en este celular':p==='denied'?'⛔ Bloqueados. Actívalos en Ajustes del celular → Notificaciones → UPC CLBR.':'Te avisamos de turnos disponibles, cambios aprobados y novedades.';
-  const bt=p==='granted'?'<button class="btn" id="pushTest">🔒 Probar con el celular bloqueado</button>':p==='default'?'<button class="btn pri" id="pushOn">Activar</button>':'';
+  const bt=p==='granted'?(JEFE_YO.includes(S.me)?'<button class="btn" id="pushTest">🔒 Probar con el celular bloqueado</button>':''):p==='default'?'<button class="btn pri" id="pushOn">Activar</button>':'';
   return `<div class="card pushc"><div><b>🔔 Avisos al celular</b><span class="sm-dim">${txt}</span></div>${bt}</div>`;
 }
 function wirePushCard(){
-  const a=$('#pushOn'); if(a) a.onclick=async()=>{ await pushActivar(a); if(S.tab==='mine') render(); };
+  const a=$('#pushOn'); if(a) a.onclick=async()=>{ await pushActivar(a); if(S.tab==='mine'||S.tab==='rec') render(); };
   const t=$('#pushTest'); if(t) t.onclick=async()=>{ t.disabled=true; t.textContent='Programando…';
     try{ await conPin(pushToken); await gs('pushProbarLuego', S.me); toast('🔒 Bloquea el celular ahora: en unos 30 segundos te llega un aviso de prueba'); t.textContent='✓ Prueba en camino'; }
     catch(e){ toast('No se pudo: '+errMsg(e),1); t.disabled=false; t.textContent='🔒 Probar con el celular bloqueado'; } };
@@ -3752,7 +3772,7 @@ async function render(){
   const av=avisosJefe(), ac=$('#admCnt'), nC=cambiosN(); if(ac){ ac.hidden=!((av&&av.tot)||nC); if(av) ac.title=av.txt; ac.textContent=nC?`🔄 ${nC}`:'!'; ac.classList.toggle('cmbig',!!nC); if(nC) ac.title=`${nC} ${plural(nC,'cambio','cambios')} para visar`; }
   if(S.tab!=='admin'){ const dk=$('#dock'); if(dk) dk.hidden=true; }
   renderNow();
-  try{ await ({cal:renderCal, mine:renderMine, sign:renderSign, admin:renderAdmin})[S.tab](); }
+  try{ await ({cal:renderCal, mine:renderMine, sign:renderSign, rec:renderRec, admin:renderAdmin})[S.tab](); }
   catch(e){ $('#view').innerHTML=`<div class="card empty">Algo falló: ${esc(errMsg(e))}<br><br><button class="btn pri" onclick="location.reload()">Recargar</button></div>`; }
 }
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='admin' && !ADMIN){ loginModal(); return; } S.tab=b.dataset.tab; render(); });

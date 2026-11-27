@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Aislamiento</title>
+<meta name="theme-color" content="#c62828">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" sizes="192x192" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFkElEQVR4Xu3cbXITSRBFUYuYxYglwP7DswS8GxMChJt2f1R1ZVZV5rvn38SA1LbeVbXB+PYyidf7/X2SS0EH39/ebh2e5tSwi2DwWBoVRNcAGD1K9IzBPQBGjxbeMbgFwPBhySsE8wAYPjxZh/DF8mIZP7xZb8zkBLC+KKCExWnQfAIwfoxisb2mACwuAGjRusFLt0CtTwp4uHJLVH0CMH7M6so2qwK48gRAT7UbLQ6g9oGBUWq2WhwAkFFRADVFATMo3expAKUPBMymZLuHAZQ8ADCzsw2fngBAZrsBnJUDRHG05c0AGD+y2ds0t0CQ9ikA3v2R1da2OQEg7Z8AePdHduuNcwJAGgFA2t8AuP2BiuXWOQEgjQAg7VcA3P6M8+3Hj3FPLuy5+f+EPwfDrEe//O//v34ddl2KCKCjknf7568hhD4IwFnJ6LdwKvRx4/7f3tXRl+BksEUAhjyHv0YINgigUc/R7yGG6wjgghlGTww2CKDQzKMnhusI4ETE4fP1QjkC2JBh9JwKZQjgj8yjJ4Z98gEoDp9bpA+SATD6fWp/pCoTAKOvpxBD+gAYfrvMIaQMgNH7yRZDmgAYfX8ZYggdAKOfR9QYQgbA8OcVLYQwATD6eCLEwE+FgDQCgDQCgDQCgDQCgDQCgDQCgLQwAUT4M2V8iPJ6hQkA8EAAkEYAkMYPx3XicQ/M90PZ4wSANAKANAKANAKANAKANAKANAKANAKANAKAtFABePztKuxFep1CBQBYIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIk/6xKJG+aevB83pVf+QKJwCkhQvA810Q7aK9PuECACwRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKSFDCDadxyqiPi6hAwAsEIAkEYAkEYAkCb9j+I9/yG4xxeEnterihMA0ggA0sIG4HGLgeuivh5hA3iI+knPJvLrEDoAIhgv8vgfwgdABONEH3+aAIigvwzjTxUAEfSTZfzpAiACf5nGnzIAIvCTbfxpAyACexnHnzoAIrCTdfzpAyCCdpnHLxEAEVyXffwyARBBPYXxSwUAbEnxrRClVN7VWil9nqQC4FbonNL4ZW+B1F7kUoqfF7kT4EnxxT6i+vmQDYDboQ+q45e9BVpSfvF5E3h5ub3e7++HZ6MIxR85oh4/J4DwbQDj/036a4A1lVGofJwlCGAl+ziyf3y1CGBD1pFk/bhaEMCObGPJ9vFYIYADWUaT5ePwQAAnoo8n+vV7I4ACUUcU9bp7IoBC0cYU7XpHIYAKUUYV5TpnQACVZh/X7Nc3GwK4YNaRzXpdMyOAi2Yb22zXEwUBNJhldLNcR0QE0Gj0+EY/f3QEYGDUCEc9byYEYKT3GHs/X1YEYKjXKHs9jwICgDQCMOb97uz9+GoIwIHXSL0eVxkBOLEeq/Xj4TcCcGQ1WqvHwWcE4Kx1vK2/H8cIoIOrI776+1COADqpHXPtr8c1BNBR6ahLfx3aEUBnZ+M++/+w9eX729vN9iFxZm/kjL+vx/Y5AQZZj53xj0EAAz1Hz/jHIYDBGP9YvwLg6wCoeW6eEwDSCADS/gbAbRBULLfOCQBpBABp/wTAbRCyW2+cEwDSPgXAKYCstrbNCQBpmwFwCiCbvU3vngBEgCyOtswtEKQdBsApgOjONnx6Apw9ADCrku2eBvBQ8kDATEo3WxQAkFVxAKVFAaPVbLU4AG6FEEHN+B+qAiACzKx2/A9NPxPo9X5/n/kTAg1Xhv9UfQIstTwxYKF1g00BcEuEkVrH33wLtMYtEXqwGL7JLdCa5YUBW6w31vRF8BFOA1iyHv6TWwBPhIAWXsPvFsASMaCE9+iX3E+APcSApZ6jnyKANYLQMmrwaz8Bx0Wm2sgS7JoAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFkElEQVR4Xu3cbXITSRBFUYuYxYglwP7DswS8GxMChJt2f1R1ZVZV5rvn38SA1LbeVbXB+PYyidf7/X2SS0EH39/ebh2e5tSwi2DwWBoVRNcAGD1K9IzBPQBGjxbeMbgFwPBhySsE8wAYPjxZh/DF8mIZP7xZb8zkBLC+KKCExWnQfAIwfoxisb2mACwuAGjRusFLt0CtTwp4uHJLVH0CMH7M6so2qwK48gRAT7UbLQ6g9oGBUWq2WhwAkFFRADVFATMo3expAKUPBMymZLuHAZQ8ADCzsw2fngBAZrsBnJUDRHG05c0AGD+y2ds0t0CQ9ikA3v2R1da2OQEg7Z8AePdHduuNcwJAGgFA2t8AuP2BiuXWOQEgjQAg7VcA3P6M8+3Hj3FPLuy5+f+EPwfDrEe//O//v34ddl2KCKCjknf7568hhD4IwFnJ6LdwKvRx4/7f3tXRl+BksEUAhjyHv0YINgigUc/R7yGG6wjgghlGTww2CKDQzKMnhusI4ETE4fP1QjkC2JBh9JwKZQjgj8yjJ4Z98gEoDp9bpA+SATD6fWp/pCoTAKOvpxBD+gAYfrvMIaQMgNH7yRZDmgAYfX8ZYggdAKOfR9QYQgbA8OcVLYQwATD6eCLEwE+FgDQCgDQCgDQCgDQCgDQCgDQCgLQwAUT4M2V8iPJ6hQkA8EAAkEYAkMYPx3XicQ/M90PZ4wSANAKANAKANAKANAKANAKANAKANAKANAKAtFABePztKuxFep1CBQBYIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIIwBIk/6xKJG+aevB83pVf+QKJwCkhQvA810Q7aK9PuECACwRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKQRAKSFDCDadxyqiPi6hAwAsEIAkEYAkEYAkCb9j+I9/yG4xxeEnterihMA0ggA0sIG4HGLgeuivh5hA3iI+knPJvLrEDoAIhgv8vgfwgdABONEH3+aAIigvwzjTxUAEfSTZfzpAiACf5nGnzIAIvCTbfxpAyACexnHnzoAIrCTdfzpAyCCdpnHLxEAEVyXffwyARBBPYXxSwUAbEnxrRClVN7VWil9nqQC4FbonNL4ZW+B1F7kUoqfF7kT4EnxxT6i+vmQDYDboQ+q45e9BVpSfvF5E3h5ub3e7++HZ6MIxR85oh4/J4DwbQDj/036a4A1lVGofJwlCGAl+ziyf3y1CGBD1pFk/bhaEMCObGPJ9vFYIYADWUaT5ePwQAAnoo8n+vV7I4ACUUcU9bp7IoBC0cYU7XpHIYAKUUYV5TpnQACVZh/X7Nc3GwK4YNaRzXpdMyOAi2Yb22zXEwUBNJhldLNcR0QE0Gj0+EY/f3QEYGDUCEc9byYEYKT3GHs/X1YEYKjXKHs9jwICgDQCMOb97uz9+GoIwIHXSL0eVxkBOLEeq/Xj4TcCcGQ1WqvHwWcE4Kx1vK2/H8cIoIOrI776+1COADqpHXPtr8c1BNBR6ahLfx3aEUBnZ+M++/+w9eX729vN9iFxZm/kjL+vx/Y5AQZZj53xj0EAAz1Hz/jHIYDBGP9YvwLg6wCoeW6eEwDSCADS/gbAbRBULLfOCQBpBABp/wTAbRCyW2+cEwDSPgXAKYCstrbNCQBpmwFwCiCbvU3vngBEgCyOtswtEKQdBsApgOjONnx6Apw9ADCrku2eBvBQ8kDATEo3WxQAkFVxAKVFAaPVbLU4AG6FEEHN+B+qAiACzKx2/A9NPxPo9X5/n/kTAg1Xhv9UfQIstTwxYKF1g00BcEuEkVrH33wLtMYtEXqwGL7JLdCa5YUBW6w31vRF8BFOA1iyHv6TWwBPhIAWXsPvFsASMaCE9+iX3E+APcSApZ6jnyKANYLQMmrwaz8Bx0Wm2sgS7JoAAAAASUVORK5CYII=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* VOICE: clínico, calmo, se usa a las 4 AM con guantes puestos.
+   IDEA: el cartel de la puerta de la habitación: un color grande dice qué hacer.
+   PICTURE: las tarjetas de precaución (rojo contacto, azul gotitas, ámbar aérea) en grande.
+   COLOUR and TYPE: blanco, tinta azul pizarra, colores de señalética; Atkinson Hyperlegible.
+   LAYOUT: una columna: inmunosupresión, lista para tildar, resultado, barra fija abajo. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0f151b);--ink:light-dark(#14202b,#e8eef3);--mut:light-dark(#566573,#9fb0bf);
+--line:light-dark(#dde3e8,#26323d);--soft:light-dark(#f3f6f8,#17212a);
+--c:#c62828;--g:#1565c0;--a:#b26a00;--ok:light-dark(#2e6b4f,#7cc4a0)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip;padding-bottom:130px}
+main{max-width:760px;margin:0 auto;padding:20px 16px}
+h1{font-size:32px;line-height:1.05;margin:4px 0 6px}
+h2{font-size:21px;margin:28px 0 10px}
+.sub{color:var(--mut);margin:0}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;min-height:48px;font:inherit;font-weight:700;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;cursor:pointer}
+.seg button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+details.def{margin-top:8px;color:var(--mut);font-size:15px}
+input[type=search]{width:100%;min-height:48px;font:inherit;font-size:16px;padding:8px 12px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.grp{margin-top:8px}.gh{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:52px;padding:8px 14px;font:inherit;font-weight:700;text-align:left;background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.gh .n{font-size:13px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:1px 9px;margin-left:6px}
+.gh .ar{flex:none;transition:transform .15s}.gh[aria-expanded=true] .ar{transform:rotate(90deg)}
+.gb{padding-top:6px}
+.it{border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg)}
+.it.on{border-color:var(--ink);background:var(--soft)}
+.it>label{display:flex;gap:12px;align-items:center;padding:10px 12px;min-height:48px;cursor:pointer}
+.it input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(--ink)}
+.it small{display:block;color:var(--mut);font-size:14px}
+.subs{padding:0 12px 10px 46px;display:grid;gap:4px}
+.subs label{display:flex;gap:10px;align-items:center;min-height:40px;font-size:15px;cursor:pointer}
+.subs input{width:20px;height:20px;flex:none;accent-color:var(--ink)}
+#res{scroll-margin-top:12px}
+.cards{display:grid;gap:10px}
+.card{border-radius:14px;padding:16px 18px;color:#fff}
+.card b{display:block;font-size:30px;line-height:1.1}
+.card span{font-size:15px;opacity:.95}
+.card.c{background:var(--c)}.card.g{background:var(--g)}.card.a{background:var(--a)}
+.card.s{background:var(--soft);color:var(--ink);border:2px solid var(--ok)}
+.card.s b{color:var(--ok)}
+.empty{color:var(--mut);border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center}
+.notif{margin-top:10px;border:2px solid var(--a);border-radius:12px;padding:10px 14px;font-size:15px}
+.notif ul{margin:4px 0 0;padding-left:20px}
+.row{border-top:1px solid var(--line);padding:12px 0}
+.row h4{margin:0 0 4px;font-size:17px}
+.chips{display:inline-flex;gap:4px;vertical-align:middle;margin-left:6px}
+.chip{font-size:12px;font-weight:700;color:#fff;border-radius:6px;padding:1px 7px}
+.chip.c{background:var(--c)}.chip.g{background:var(--g)}.chip.a{background:var(--a)}.chip.s{background:var(--mut)}
+.rule{margin:0;font-size:15px}
+.note{margin:4px 0 0;font-size:14px;color:var(--mut)}
+.dt{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:8px;font-size:15px}
+.dt input{font:inherit;font-size:16px;min-height:44px;padding:4px 8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.out{font-weight:700}
+.out.ready{color:var(--ink);background:var(--soft);border-radius:8px;padding:6px 10px}
+details.more{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:4px 14px}
+details.more summary{min-height:48px;display:flex;align-items:center;font-weight:700;cursor:pointer}
+.more h5{margin:12px 0 2px;font-size:15px}
+.more ul{margin:0 0 6px;padding-left:20px;font-size:15px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.bar .chip{font-size:15px;padding:6px 10px}
+.bar button{font:inherit;font-size:15px;min-height:44px;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:0 12px;cursor:pointer}
+/* dentro de la app UPC CLBR */
+body{padding-top:calc(env(safe-area-inset-top) + 6px)}
+.volver{display:inline-flex;align-items:center;gap:4px;min-height:40px;font-weight:700;color:var(--g);text-decoration:none;font-size:16px}
+footer{color:var(--mut);font-size:13px;margin-top:32px;border-top:1px solid var(--line);padding-top:12px}
+@media(prefers-reduced-motion:no-preference){.card{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateY(6px)}}}
+</style>
+</head>
+<body>
+<main>
+<a class="volver" href="./">‹ UPC CLBR</a>
+<h1>Aislamientos UPC</h1>
+
+<h2>1. ¿Paciente inmunosuprimido?</h2>
+<div class="seg" id="imm">
+  <button type="button" data-v="0" aria-pressed="true">No</button>
+  <button type="button" data-v="1" aria-pressed="false">Sí</button>
+</div>
+<details class="def"><summary>¿Qué cuenta como inmunosuprimido?</summary>
+<p>Neutropenia (RAN &lt;500), leucemia, linfoma, VIH, esplenectomía, trasplante con inmunosupresores, quimioterapia, corticoides en dosis altas o de uso prolongado, o terapia biológica.</p></details>
+
+<h2>2. Hallazgos del paciente</h2>
+<input type="search" id="q" placeholder="Buscar (ej: KPC, influenza, difficile)" aria-label="Buscar germen">
+<div id="list"></div>
+
+<h2 id="res">3. Resultado</h2>
+<div id="out"></div>
+
+<footer>
+Basado en el protocolo <b>GCL 3.3 v2 – Precauciones basadas en mecanismo de transmisión</b> (Clínica Bupa Reñaca, julio 2026).<br>
+Herramienta de apoyo para decidir durante el turno. No reemplaza la indicación médica; IAAS revisa cada caso.<br>
+Los días se cuentan con la fecha de inicio (síntomas, toma de muestra, diagnóstico o tratamiento) como día 1 (ej.: síntomas el 1, 5 días → último día el 5), según indicación de IAAS.<br>
+App v1.4 · última actualización 26-11-2026.
+</footer>
+</main>
+
+<div class="bar" id="bar"></div>
+
+<script>
+{
+const P={C:'Contacto',G:'Gotitas',A:'Aérea'};
+const PD={C:'Guantes y pechera para entrar a la unidad',G:'Mascarilla quirúrgica a menos de 1 m · N95 si hay procedimiento que genera aerosoles',A:'Mascarilla N95 siempre · habitación individual con puerta cerrada'};
+const FIS='Inicio de síntomas (o toma de muestra si está asintomático)';
+const R5={k:'days',n:5,ref:FIS,cond:'y hasta que no tenga síntomas infecciosos.'};
+const BR={k:'clin',t:'Hasta que se corten las deposiciones líquidas: suspender cuando tenga Bristol 1–5 por al menos 48 h.'};
+const ALTA={k:'alta',t:'Durante toda la hospitalización, hasta el alta.'};
+const T24={k:'hours',n:24,ref:'Inicio del tratamiento efectivo'};
+const STD={k:'std',t:'No requiere aislamiento: solo precauciones estándar.'};
+const COSTRA={k:'clin',t:'Hasta que todas las lesiones estén en costra y secas.'};
+const DREN={k:'clin',t:'Hasta que el drenaje se detenga o se pueda contener con un apósito.'};
+const PROL='Inmunosuprimido: considerar diseminación prolongada (evaluación médica).';
+const CARB={carb:1,ar:1}, AR={ar:1};
+
+const GR=[['mr','Multirresistentes (ARAISP)'],['ant','Antecedentes e ingreso'],['dig','Digestivos'],['resp','Respiratorios'],['neu','Meningitis y sepsis'],['piel','Piel, heridas y exantemas'],['std','Otros hallazgos frecuentes'],['raro','Poco frecuentes']];
+
+const G=[
+{id:'kpc',g:'mr',n:'Enterobacteria productora de KPC',p:['C'],d:ALTA,f:CARB},
+{id:'ndm',g:'mr',n:'Enterobacteria productora de NDM',p:['C'],d:ALTA,f:CARB},
+{id:'vim',g:'mr',n:'Enterobacteria productora de VIM',p:['C'],d:ALTA,f:CARB},
+{id:'imp',g:'mr',n:'Enterobacteria productora de IMP',p:['C'],d:ALTA,f:CARB},
+{id:'oxa',g:'mr',n:'Enterobacteria productora de OXA-48',p:['C'],d:ALTA,f:CARB},
+{id:'pae',g:'mr',n:'Pseudomonas aeruginosa productora de carbapenemasa',p:['C'],d:ALTA,f:CARB},
+{id:'abac',g:'mr',n:'Acinetobacter baumannii productor de carbapenemasa',s:'Ej: OXA-23, OXA-24/40, OXA-58',p:['C'],d:ALTA,f:CARB},
+{id:'abacol',g:'mr',n:'Acinetobacter baumannii resistente a colistín',p:['C'],d:ALTA,f:AR},
+{id:'samr',g:'mr',n:'Staphylococcus aureus resistente a meticilina (SAMR)',s:'El informe puede decir mecA o PBP2a',p:['C'],d:ALTA,f:AR},
+{id:'visa',g:'mr',n:'S. aureus VISA / VRSA',s:'Resistencia intermedia o total a vancomicina',p:['C'],d:ALTA,f:AR},
+{id:'blee',g:'mr',n:'BLEE / CTX-M',s:'El informe puede decir CTX-M, SHV o TEM: todas son BLEE',sub:[
+ {l:'En Klebsiella, Enterobacter, Proteus u otra enterobacteria',p:['C'],d:ALTA,f:AR},
+ {l:'En Escherichia coli',p:[],d:STD,nt:'La norma ministerial no considera ARAISP a E. coli BLEE.'}]},
+{id:'vre',g:'mr',n:'Enterococo resistente a vancomicina (VanA / VanB)',p:['C'],d:ALTA,f:AR},
+{id:'cauris',g:'mr',n:'Candida auris',p:['C'],d:ALTA,f:AR,nt:'En futuros reingresos se mantiene contacto toda la hospitalización.'},
+{id:'otrar',g:'mr',n:'Otra bacteria con resistencia transferible',p:['C'],d:ALTA,f:AR,nt:'Confirmar con IAAS.'},
+
+{id:'ant',g:'ant',n:'Antecedente de ARAISP en hospitalización previa',s:'Ej: VIM en una internación anterior',p:['C'],f:AR,sub:[
+ {l:'Último cultivo positivo hace ≤6 meses · carbapenemasa',d:{k:'alta',t:'Mantener contacto toda la hospitalización.'},f:CARB},
+ {l:'Último cultivo positivo hace ≤6 meses · otro ARAISP',d:{k:'alta',t:'Mantener contacto toda la hospitalización.'}},
+ {l:'Último cultivo positivo hace >6 meses · carbapenemasa',d:{k:'clin',t:'Contacto hasta el recontrol: 2 hisopados (anal/nasal) separados por 7 días, o cultivo del sitio infectado antes. Ambos negativos → se suspende.'},f:CARB},
+ {l:'Último cultivo positivo hace >6 meses · otro ARAISP',d:{k:'clin',t:'Contacto hasta el recontrol: 2 hisopados (anal/nasal) separados por 7 días, o cultivo del sitio infectado antes. Ambos negativos → se suspende.'}},
+ {l:'Candida auris (en cualquier momento)',d:{k:'alta',t:'Contacto toda la hospitalización. No se hace recontrol.'}}],
+ nt:'Conviene tomar el recontrol sin antibiótico activo contra ese germen (puede dar falso negativo).'},
+{id:'tras',g:'ant',n:'Ingresa trasladado de otro centro',s:'≥24 h en otro hospital, ≥48 h en una urgencia, o paciente institucionalizado (≥48 h)',p:['C'],d:{k:'clin',t:'Contacto preventivo hasta el resultado del hisopado nasal y la PCR rectal de portación (PCR ~1 día, cultivo ~3 días). Negativo → se suspende.'}},
+
+{id:'cd',g:'dig',n:'Clostridioides difficile',p:['C'],d:{k:'days',n:30,ref:'Fecha del diagnóstico',cond:'y con ≥7 días sin diarrea (Bristol 1–5).'},f:{cd:1,soap:1},nt:'Incontinencia fecal u ostomía: define IAAS, puede extenderse hasta el alta. Si vuelve la diarrea, reinstaurar.'},
+{id:'noro',g:'dig',n:'Norovirus',p:['C'],d:BR,f:{soap:1},nt:'Para limpiar heces o vómitos en cantidad, conviene usar mascarilla (el virus puede pasar al aire).'},
+{id:'rota',g:'dig',n:'Rotavirus',p:['C'],d:BR,imm:{nt:PROL}},
+{id:'diar',g:'dig',n:'Otro agente de diarrea',s:'Salmonella, Shigella, Yersinia, Giardia, Vibrio, Sapovirus, Astrovirus, Adenovirus entérico',p:['C'],d:BR,nt:'Vibrio cholerae: notificación inmediata.',ep:'Si es Vibrio cholerae (cólera): EPIVIGILA inmediata'},
+{id:'hve',g:'dig',n:'Hepatitis E',p:[],d:STD,sub:[
+ {l:'Paciente continente',p:[],d:STD},
+ {l:'Incontinente o con pañal',p:['C'],d:BR}]},
+{id:'crypto',g:'dig',n:'Cryptosporidium',sub:[
+ {l:'Paciente continente',p:[],d:STD},
+ {l:'Incontinente o con pañal',p:['C'],d:BR}],f:{soap:1}},
+{id:'stec',g:'dig',n:'E. coli enterohemorrágica (O157:H7 / STEC)',p:[],d:STD,ep:'SEREMI diaria si hay síndrome hemolítico urémico'},
+{id:'hva',g:'dig',n:'Hepatitis A',p:[],d:STD,ep:'EPIVIGILA diaria',sub:[
+ {l:'Paciente continente',p:[],d:STD},
+ {l:'Incontinente o con pañal',p:['C'],d:{k:'alta',t:'Durante la hospitalización.'}}]},
+
+{id:'flu',g:'resp',n:'Influenza A o B (estacional)',p:['G'],d:{k:'days',n:5,ref:FIS,cond:'(sin importar el tratamiento) y hasta que no tenga síntomas infecciosos.'},ep:'SEREMI inmediata si es IRAG (infección respiratoria aguda grave)'},
+{id:'flua',g:'resp',n:'Influenza aviar (H5N1, H7, H9)',p:['A','C'],d:R5,ep:'SEREMI inmediata si es IRAG (infección respiratoria aguda grave)'},
+{id:'cov',g:'resp',n:'SARS-CoV-2 (COVID-19)',p:['G','C'],d:{k:'days',n:5,ref:FIS,cond:''},f:{covid:1},nt:'N95 solo si hay procedimiento que genera aerosoles.',imm:{d:{k:'days',n:5,ref:FIS,cond:'como mínimo.'},nt:PROL}},
+{id:'vrs',g:'resp',n:'Virus respiratorio sincicial (VRS)',p:['G','C'],d:R5},
+{id:'mpv',g:'resp',n:'Metapneumovirus',p:['G','C'],d:R5},
+{id:'para',g:'resp',n:'Parainfluenza',p:['G','C'],d:R5,imm:{nt:PROL}},
+{id:'rino',g:'resp',n:'Rinovirus / Enterovirus respiratorio',p:['G','C'],d:R5},
+{id:'adeno',g:'resp',n:'Adenovirus respiratorio',p:['G','C'],d:R5,imm:{nt:PROL}},
+{id:'myco',g:'resp',n:'Mycoplasma pneumoniae',p:['G','C'],d:R5},
+{id:'pert',g:'resp',n:'Bordetella pertussis (coqueluche)',p:['G'],ep:'EPIVIGILA diaria',sub:[
+ {l:'Con tratamiento antibiótico',d:{k:'days',n:5,ref:'Inicio del tratamiento efectivo',cond:''}},
+ {l:'Sin tratamiento antibiótico',d:{k:'days',n:21,ref:'Inicio de la tos',cond:''}}]},
+{id:'tbc',g:'resp',n:'Tuberculosis (sospecha o confirmada)',ep:'EPIVIGILA diaria',sub:[
+ {l:'Pulmonar o laríngea',p:['A'],d:{k:'days',n:14,ref:'Inicio del tratamiento efectivo',cond:'(TBC sensible). TBC resistente: hasta que la baciloscopia dé negativa.'},nt:'Solo sospecha: se suspende si otro diagnóstico explica el cuadro. Si la sospecha es alta y el esputo dio negativo, repetir con una buena muestra.'},
+ {l:'Extrapulmonar con lesiones que drenan',p:['A','C'],d:{k:'clin',t:'Hasta que mejore clínicamente y deje de drenar.'}},
+ {l:'Extrapulmonar sin drenaje o meníngea',p:[],d:STD}]},
+{id:'covest',g:'resp',n:'Coronavirus estacional (229E, OC43, NL63, HKU1)',p:[],d:STD},
+{id:'cpn',g:'resp',n:'Chlamydia pneumoniae',p:[],d:STD},
+{id:'leg',g:'resp',n:'Legionella pneumophila',p:[],d:STD,ep:'SEREMI diaria'},
+{id:'neumo',g:'resp',n:'Streptococcus pneumoniae (enfermedad invasora)',p:[],d:STD,ep:'EPIVIGILA diaria'},
+{id:'hanta',g:'resp',n:'Hantavirus (síndrome pulmonar)',p:['A','C'],d:{k:'iaas',t:'Durante la fase aguda; la suspensión la indica IAAS.'},ep:'EPIVIGILA inmediata'},
+
+{id:'nm',g:'neu',n:'Neisseria meningitidis (meningitis o meningococcemia)',p:['G'],d:T24,ep:'EPIVIGILA inmediata'},
+{id:'hi',g:'neu',n:'Haemophilus influenzae (meningitis)',p:['G'],d:T24,ep:'EPIVIGILA inmediata'},
+{id:'sga',g:'neu',n:'Streptococcus pyogenes (grupo A)',sub:[
+ {l:'Neumonía, faringitis, escarlatina o enfermedad invasiva grave',p:['G'],d:T24},
+ {l:'Herida con mucha secreción o fascitis necrotizante',p:['G','C'],d:{k:'hours',n:24,ref:'Inicio del tratamiento efectivo',cond:'y hasta que el drenaje se detenga o se contenga con apósito.'}},
+ {l:'Herida con poca secreción contenida por el apósito',p:[],d:STD},
+ {l:'Endometritis (sepsis puerperal)',p:[],d:STD,ep:'DHIS2 inmediata'}]},
+{id:'sa',g:'neu',n:'Staphylococcus aureus sensible (no SAMR)',sub:[
+ {l:'Piel, herida o quemadura con mucha secreción',p:['C'],d:DREN},
+ {l:'Piel, herida o quemadura con poca secreción',p:[],d:STD},
+ {l:'Síndrome de piel escaldada',p:['C'],d:{k:'clin',t:'Mientras dure la enfermedad (la suspensión requiere evaluación médica).'}},
+ {l:'Síndrome de shock tóxico',p:[],d:STD}]},
+
+{id:'vari',g:'piel',n:'Varicela',p:['A','C'],d:COSTRA},
+{id:'zos',g:'piel',n:'Herpes zóster',sub:[
+ {l:'Localizado que se puede cubrir',p:[],d:STD,imm:{p:['A','C'],d:{k:'clin',t:'Hasta descartar enfermedad diseminada y que todas las lesiones estén en costra.'}}},
+ {l:'Localizado que NO se puede cubrir',p:['C'],d:COSTRA,imm:{p:['A','C'],d:{k:'clin',t:'Hasta descartar enfermedad diseminada y que todas las lesiones estén en costra.'}}},
+ {l:'Diseminado (≥2 dermatomas) o visceral',p:['A','C'],d:{k:'days',n:7,ref:FIS,cond:'y mientras siga diseminado.'}}]},
+{id:'hsv',g:'piel',n:'Herpes simplex',sub:[
+ {l:'Primoinfección severa o diseminada',p:['C'],d:COSTRA},
+ {l:'Recurrente (piel, oral, genital)',p:[],d:STD}]},
+{id:'sarna',g:'piel',n:'Sarna (escabiosis)',p:['C'],d:T24},
+{id:'imp2',g:'piel',n:'Impétigo',p:['C'],d:T24},
+{id:'sarampion',g:'piel',n:'Sarampión',p:['A'],d:{k:'days',n:4,ref:'Inicio del exantema',cond:''},ep:'EPIVIGILA inmediata',imm:{d:{k:'clin',t:'Mientras dure la enfermedad (la suspensión requiere evaluación médica).'}}},
+
+{id:'cmv',g:'std',n:'Citomegalovirus',p:[],d:STD},
+{id:'cand',g:'std',n:'Candida (que no sea auris)',p:[],d:STD},
+{id:'asp',g:'std',n:'Aspergillus',sub:[
+ {l:'Infección localizada',p:[],d:STD},
+ {l:'Infección masiva de partes blandas con mucho drenaje',p:['A','C'],d:DREN}]},
+{id:'pcp',g:'std',n:'Pneumocystis jirovecii',p:[],d:STD,nt:'No compartir habitación con otro paciente inmunosuprimido.'},
+{id:'hbc',g:'std',n:'Hepatitis B o C',p:[],d:STD},
+{id:'vih',g:'std',n:'VIH',p:[],d:STD,ep:'EPIVIGILA diaria (con confirmación ISP)'},
+{id:'list',g:'std',n:'Listeria monocytogenes',p:[],d:STD,ep:'EPIVIGILA diaria'},
+
+{id:'paro',g:'raro',n:'Parotiditis (paperas)',p:['G'],d:{k:'days',n:7,ref:'Inicio de la inflamación',cond:''},ep:'EPIVIGILA diaria'},
+{id:'rub',g:'raro',n:'Rubéola',p:['G'],d:{k:'days',n:7,ref:'Aparición de la erupción',cond:''}},
+{id:'parvo',g:'raro',n:'Parvovirus B19 (eritema infeccioso)',p:['G','C'],d:{k:'clin',t:'Mientras dure la enfermedad (la suspensión requiere evaluación médica).'},imm:{d:{k:'alta',t:'Durante toda la hospitalización.'}}},
+{id:'pedi',g:'raro',n:'Pediculosis',p:['C'],d:T24},
+{id:'dift',g:'raro',n:'Difteria',ep:'EPIVIGILA inmediata',d:{k:'clin',t:'Hasta completar el tratamiento antibiótico y tener 2 cultivos de control negativos tomados con 24 h de diferencia.'},sub:[
+ {l:'Faríngea',p:['G']},
+ {l:'Cutánea',p:['C']}]},
+{id:'cperf',g:'raro',n:'Clostridium perfringens (gangrena gaseosa)',sub:[
+ {l:'Con supuración abundante',p:['C'],d:DREN},
+ {l:'Sin supuración',p:[],d:STD}]},
+{id:'conj',g:'raro',n:'Conjuntivitis viral aguda (hemorrágica)',s:'Adenovirus, enterovirus 70, Coxsackie A24',p:['C'],d:{k:'clin',t:'Mientras dure la enfermedad (la suspensión requiere evaluación médica).'}},
+{id:'cjd',g:'raro',n:'Creutzfeldt-Jakob',p:['C'],d:{k:'iaas',t:'Según indicación de IAAS.'},nt:'Instrumental desechable y desinfección especial de superficies y objetos con tejido neural o LCR.',ep:'EPIVIGILA diaria'},
+{id:'hem',g:'raro',n:'Fiebre hemorrágica viral',ep:'EPIVIGILA inmediata',sub:[
+ {l:'Ébola, Marburgo o virus Nipah',p:['A','C'],d:{k:'iaas',t:'Según indicación de la autoridad sanitaria.'}},
+ {l:'Fiebre de Lassa',p:['G','C'],d:{k:'iaas',t:'Suspensión según indicación de IAAS.'}},
+ {l:'Fiebre de Crimea-Congo',p:['G','C'],d:{k:'iaas',t:'Según indicación de la autoridad sanitaria.'},ep:''}]}
+];
+
+const st={imm:0,sel:{},dt:{},open:{}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const byId=Object.fromEntries(G.map(x=>[x.id,x]));
+
+function resolve(x){
+  const si=st.sel[x.id];
+  let r={p:x.p||[],d:x.d,nt:x.nt,ep:x.ep,f:{...(x.f||{})},imm:x.imm};
+  let lbl=x.n;
+  if(x.sub){const s=x.sub[si];lbl+=' · '+s.l;
+    if(s.p)r.p=s.p; if(s.d)r.d=s.d; if(s.nt)r.nt=s.nt; if(s.ep)r.ep=s.ep; if(s.f)r.f={...r.f,...s.f}; if(s.imm)r.imm=s.imm;}
+  if(st.imm&&r.imm){const m=r.imm; if(m.p)r.p=m.p; if(m.d)r.d=m.d; if(m.nt)r.nt=r.nt&&r.nt!==m.nt?r.nt+' '+m.nt:m.nt;}
+  r.lbl=lbl; r.id=x.id; return r;
+}
+
+function renderList(){
+  const q=norm($('#q').value.trim());
+  $('#list').innerHTML=GR.map(([g,t])=>{
+    const items=G.filter(x=>x.g===g&&(!q||norm(x.n+' '+(x.s||'')).includes(q)||st.sel[x.id]!==undefined));
+    if(!items.length)return'';
+    const cnt=items.filter(x=>st.sel[x.id]!==undefined).length;
+    const open=!!q||st.open[g];
+    return `<div class="grp"><button type="button" class="gh" data-g="${g}" aria-expanded="${open}"><span>${esc(t)}${cnt?`<span class="n">${cnt}</span>`:''}</span><span class="ar">›</span></button>${open?`<div class="gb">${items.map(x=>{
+      const on=st.sel[x.id]!==undefined;
+      const subs=on&&x.sub?`<div class="subs">${x.sub.map((s,i)=>`<label><input type="radio" name="s_${x.id}" data-id="${x.id}" data-i="${i}" ${st.sel[x.id]===i?'checked':''}>${esc(s.l)}</label>`).join('')}</div>`:'';
+      return `<div class="it${on?' on':''}"><label><input type="checkbox" data-id="${x.id}" ${on?'checked':''}><span>${esc(x.n)}${x.s?`<small>${esc(x.s)}</small>`:''}</span></label>${subs}</div>`;
+    }).join('')}</div>`:''}</div>`;
+  }).join('')||'<p class="empty">No hay coincidencias.</p>';
+}
+
+const fmtD=d=>d.toLocaleDateString('es-CL',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtDT=d=>fmtD(d)+' '+d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',hour12:false})+' h';
+function calc(r){
+  const v=st.dt[r.id]; if(!v)return'';
+  if(r.d.k==='days'){const [y,m,dd]=v.split('-').map(Number);return fmtD(new Date(y,m-1,dd+r.d.n-1))+' (día '+r.d.n+')';}
+  const t=new Date(v); if(isNaN(t))return''; return fmtDT(new Date(t.getTime()+r.d.n*3600e3));
+}
+const chip=p=>p.length?p.map(k=>`<span class="chip ${k.toLowerCase()}">${P[k]}</span>`).join(''):'<span class="chip s">Estándar</span>';
+
+function renderOut(){
+  const R=Object.keys(st.sel).map(id=>resolve(byId[id]));
+  const set=new Set(R.flatMap(r=>r.p));
+  const ord=['C','G','A'].filter(k=>set.has(k));
+  const f=R.reduce((a,r)=>({...a,...r.f}),{});
+  const onlyCovid=set.has('G')&&R.filter(r=>r.p.includes('G')).every(r=>r.f.covid);
+  $('#bar').innerHTML=R.length?`${ord.length?ord.map(k=>`<span class="chip ${k.toLowerCase()}">${P[k]}</span>`).join(''):'<span class="chip s">Solo estándar</span>'}<button type="button" id="go">Ver detalle ↓</button><button type="button" id="clr">Limpiar</button>`:'<span class="sub">Seleccione al menos un hallazgo</span>';
+  if(!R.length){$('#out').innerHTML='<p class="empty">Aún no hay hallazgos seleccionados.</p>';return;}
+
+  const cards=ord.length?ord.map(k=>`<div class="card ${k.toLowerCase()}"><b>${P[k]}</b><span>${k==='G'&&onlyCovid?'Mascarilla quirúrgica a menos de 1 m · N95 solo si hay procedimiento que genera aerosoles':PD[k]}</span></div>`).join(''):'<div class="card s"><b>No requiere aislamiento</b><span>Solo precauciones estándar</span></div>';
+  const eps=R.filter(r=>r.ep).map(r=>`<li><b>${esc(byId[r.id].n)}:</b> ${esc(r.ep)}</li>`).join('');
+  const notif=eps?`<div class="notif">🔔 <b>Requiere notificación</b> (la hace el médico tratante)<ul>${eps}</ul></div>`:'';
+
+  const rows=R.map(r=>{
+    const d=r.d; let rule='',inp='';
+    if(d.k==='days'||d.k==='hours'){
+      rule=`${d.k==='days'?'Mínimo '+d.n+' días':d.n+' horas'} desde: <b>${esc(d.ref)}</b>${d.cond?' '+esc(d.cond):''}`;
+      const typ=d.k==='days'?'date':'datetime-local';
+      const c=calc(r);
+      inp=`<div class="dt"><input type="${typ}" data-dt="${r.id}" value="${esc(st.dt[r.id]||'')}" aria-label="${esc(d.ref)}"><span class="out${c?' ready':''}" id="o_${r.id}">${c?(d.k==='days'?'Último día de aislamiento: ':'Reevaluar desde: ')+esc(c):'Ingrese la fecha para calcular'}</span></div>`;
+    } else rule=esc(d.t);
+    return `<div class="row"><h4>${esc(r.lbl)}<span class="chips">${chip(r.p)}</span></h4><p class="rule">${rule}</p>${inp}${r.nt?`<p class="note">${esc(r.nt)}</p>`:''}</div>`;
+  }).join('');
+
+  const any=ord.length>0, hard=f.cd||f.carb;
+  const L=[];
+  if(any){
+    const h=[];
+    if(set.has('A'))h.push('Aérea: habitación individual, idealmente con presión negativa; si no hay, puerta cerrada y ventanas abiertas (6–12 recambios de aire por hora).');
+    if(set.has('C')||set.has('G'))h.push('Contacto / gotitas: habitación individual, o cohorte con otro paciente que tenga el mismo germen si hace falta por camas.');
+    L.push(['🏥 Habitación',h]);
+    L.push(['🧤 Protección personal',ord.map(k=>`${P[k]}: ${k==='G'&&onlyCovid?'mascarilla quirúrgica a menos de 1 m; N95 solo si hay procedimiento que genera aerosoles':PD[k].toLowerCase()}.`)]);
+    L.push(['🧼 Higiene de manos',[f.soap?'<b>Lavado con agua y jabón obligatorio</b>: el alcohol gel no sirve contra C. difficile ni norovirus.':'Priorizar lavado con agua y jabón por sobre el alcohol gel.','Antebrazos descubiertos, sin reloj, anillos, pulseras ni uñas postizas o pintadas.']]);
+    L.push(['🧽 Aseo',hard?['<b>Cloro a 5.000 ppm</b> en aseos recurrentes y terminal.','Registrar cada aseo en la carpeta de la unidad.','Al alta: aseo terminal y después bioluminiscencia (no tocar superficies entre medio).']:['Según el protocolo institucional de limpieza y desinfección, con los EPP de la precaución indicada.','No salir de la habitación con los EPP puestos.']]);
+    L.push(['👥 Visitas',[hard?'<b>1 persona por día</b> (C. difficile o carbapenemasa).':'1 persona a la vez, máximo 4 por día.','Antes de entrar, explicarles higiene de manos y uso de EPP.','Niños con EPP; IAAS puede restringirlos si hay brote. No se permiten mascotas.']]);
+    const reg=['Dejar la indicación en la ficha y registrarla a diario en la evolución de enfermería.'];
+    if(f.ar||f.cd)reg.push('Verificar que figure como factor de riesgo en Máscara / SAP.');
+    L.push(['📝 Registro',reg]);
+    const tr=['Evitar traslados; si hay que hacerlo, avisar antes al servicio que lo recibe.'];
+    if(set.has('A'))tr.push('El paciente sale con mascarilla N95.');else if(set.has('G'))tr.push('El paciente sale con mascarilla quirúrgica.');
+    if(f.ar||f.cd)tr.push('Si va a pabellón: al final de la tabla (C. difficile último de todos).');
+    L.push(['🚑 Traslados',tr]);
+    const ot=['Equipos de uso exclusivo (termómetro, esfigmomanómetro, saturómetro, fonendoscopio); si no se puede, limpiarlos entre usos.','La ficha clínica queda fuera de la habitación. El paciente no sale de su habitación.'];
+    if(f.ar||f.cd)ot.push('Alimentación: vajilla desechable.');
+    L.push(['📌 Otros',ot]);
+  }
+  const more=any?`<details class="more"><summary>Más medidas</summary>${L.map(([t,a])=>`<h5>${t}</h5><ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`).join('')}</details>`:'';
+
+  $('#out').innerHTML=`<div class="cards">${cards}</div>${notif}<h2>Duración por hallazgo</h2>${rows}${more}`;
+}
+
+function sync(){renderList();renderOut();}
+
+$('#imm').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.imm=+b.dataset.v;
+  for(const x of $('#imm').children)x.setAttribute('aria-pressed',x===b);renderOut();});
+$('#q').addEventListener('input',renderList);
+$('#list').addEventListener('click',e=>{const b=e.target.closest('.gh');if(!b)return;const g=b.dataset.g;st.open[g]=!st.open[g];renderList();});
+$('#list').addEventListener('change',e=>{const t=e.target,id=t.dataset.id;if(!id)return;
+  if(t.type==='checkbox'){if(t.checked)st.sel[id]=byId[id].sub?0:null;else{delete st.sel[id];delete st.dt[id];}}
+  else st.sel[id]=+t.dataset.i;
+  sync();});
+$('#out').addEventListener('input',e=>{const id=e.target.dataset.dt;if(!id)return;st.dt[id]=e.target.value;
+  const r=resolve(byId[id]),c=calc(r),o=document.getElementById('o_'+id);
+  o.textContent=c?(r.d.k==='days'?'Último día de aislamiento: ':'Reevaluar desde: ')+c:'Ingrese la fecha para calcular';o.classList.toggle('ready',!!c);});
+$('#bar').addEventListener('click',e=>{
+  if(e.target.id==='go')$('#res').scrollIntoView({behavior:'smooth'});
+  if(e.target.id==='clr'){st.sel={};st.dt={};st.open={};$('#q').value='';sync();window.scrollTo({top:0,behavior:'smooth'});}});
+sync();
+}
+</script>
+</body>
+</html>
