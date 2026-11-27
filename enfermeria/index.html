@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UPC Enfermería</title>
+<meta name="theme-color" content="#0E2A2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="UPC Enfermería">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon-32.png">
+<style>
+:root{--bg:#F3F6F7;--card:#fff;--fg:#14222A;--dim:#5B6B73;--line:#DCE4E7;--band:#0E2A2A;--band2:#123B39;--acc:#0B7D73;
+  --uci:#D93D44;--utia:#0E9C87;--utib:#2D78C4;--now:#E7F6F3;--nowb:#0B7D73;--rojo:#B3261E;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1719;--card:#172226;--fg:#E4ECEE;--dim:#97A8AE;--line:#26363B;--now:#123430;--nowb:#3CC4B2;--rojo:#FF8A80;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--band)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;cursor:pointer}
+.band{background:linear-gradient(180deg,var(--band),var(--band2));color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 16px 14px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:42px;height:42px;border-radius:10px}
+.brand h1{margin:0;font-size:22px;line-height:1.1}
+.brand p{margin:2px 0 0;font-size:13px;color:#A9C9C4}
+.units{display:flex;gap:8px;margin-top:14px}
+.units button{flex:1;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 0;font-weight:700;font-size:15px}
+.units button[aria-pressed=true]{background:#fff;color:var(--band);border-color:#fff}
+.units button i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+main{padding:14px 16px;max-width:720px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.card h2{margin:0 0 8px;font-size:17px;display:flex;align-items:center;gap:8px}
+.card h2 small{margin-left:auto;font-size:13px;color:var(--dim);font-weight:600}
+.now{background:var(--now);border-color:var(--nowb)}
+.now h2{color:var(--nowb)}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .h{flex:0 0 76px;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px}
+.row .n{flex:1;min-width:0;font-weight:600}
+.row .n small{display:block;font-weight:500;color:var(--dim);font-size:13px}
+.sec{flex:none;font-size:12px;font-weight:800;border-radius:6px;padding:2px 7px;background:var(--line);color:var(--dim)}
+.pc{color:var(--rojo);font-weight:600}
+.tramo{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:12px 0 2px}
+.tramo:first-of-type{margin-top:0}
+.empty{color:var(--dim);font-size:15px;padding:6px 0}
+.mnav{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mnav b{flex:1;text-align:center;font-size:18px;text-transform:capitalize}
+.mnav button{border:1px solid var(--line);background:var(--card);border-radius:12px;width:44px;height:40px;font-size:20px}
+.mnav button:disabled{opacity:.35}
+.day{scroll-margin-top:12px}
+.day h2 .fest{font-size:12px;font-weight:700;color:#fff;background:#B7791F;border-radius:6px;padding:2px 7px}
+.day.hoy{border:2px solid var(--nowb)}
+.day.hoy h2::after{content:"HOY";font-size:11px;font-weight:800;color:#fff;background:var(--nowb);border-radius:6px;padding:2px 7px}
+.day.pas{opacity:.6}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav.tabs button{flex:1;border:0;background:none;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--dim)}
+nav.tabs button span{font-size:22px;line-height:1}
+nav.tabs button[aria-selected=true]{color:var(--acc)}
+nav.tabs button[aria-selected=true]::after{content:"";width:28px;height:3px;border-radius:2px;background:var(--acc);margin-top:2px}
+.foot{text-align:center;color:var(--dim);font-size:13px;margin:18px 0 4px}
+.foot button{border:0;background:none;color:var(--acc);font-weight:700;text-decoration:underline;padding:4px}
+.pick{min-height:70vh;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.pick h2{margin:0;font-size:22px;text-align:center}
+.pick p{margin:0 0 6px;text-align:center;color:var(--dim)}
+.pick button{border:0;border-radius:16px;padding:18px;font-size:20px;font-weight:800;color:#fff}
+.aisl{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:26px 16px}
+.aisl .e{font-size:54px}
+.aisl a{display:block;width:100%;background:var(--acc);color:#fff;text-decoration:none;font-weight:800;font-size:18px;padding:15px;border-radius:14px}
+.err{border-color:var(--rojo);color:var(--rojo)}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="brand"><img src="icons/icon-192.png" alt=""><div><h1>UPC Enfermería</h1><p>Clínica Bupa Reñaca</p></div></div>
+  <div class="units" id="units" hidden></div>
+</header>
+<main id="view"><div class="card empty">Cargando…</div></main>
+<nav class="tabs" id="tabs" hidden>
+  <button data-t="turno" aria-selected="true"><span>👩‍⚕️</span>De turno</button>
+  <button data-t="mes" aria-selected="false"><span>📅</span>Mes</button>
+  <button data-t="aisl" aria-selected="false"><span>🦠</span>Aislamientos</button>
+</nav>
+<script>
+// Solo lectura: médicos de turno (calendario publicado de UPC CLBR) y aislamientos. Sin PIN, sin datos personales.
+const API='https://script.google.com/macros/s/AKfycbywynnHSFUaRSQNl9VVSqfCOhGBVTTkmTvPlAM5lBBw1tivHK6GgY3iGdf4VFyfgL27qA/exec';
+const UN={uci:'UCI',utia:'UTI A',utib:'UTI B'}, UC={uci:'var(--uci)',utia:'var(--utia)',utib:'var(--utib)'};
+const WD=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], WDL=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const $=s=>document.querySelector(s);
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S={u:ls.get('enf-u')||'', ver:'', tab:'turno', ym:'', D:null, M:{}};
+
+function api(fn,args){
+  if(window.google&&google.script&&google.script.run) return new Promise((ok,mal)=>google.script.run.withSuccessHandler(ok).withFailureHandler(mal)[fn](...(args||[])));
+  return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,args:args||[],tok:''}),redirect:'follow'})
+    .then(r=>r.json()).then(r=>{ if(!r.ok) throw new Error(r.e||'Error'); return r.v; });
+}
+const ahora=()=>{ const d=new Date(); return {iso:isoDe(d), h:d.getHours()+d.getMinutes()/60}; };
+function isoDe(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function isoAdd(iso,n){ const p=iso.split('-').map(Number); return isoDe(new Date(p[0],p[1]-1,p[2]+n,12)); }
+function ymAdd(ym,n){ const p=ym.split('-').map(Number), d=new Date(p[0],p[1]-1+n,1); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2); }
+function hrs(h){ const m=String(h||'').match(/^(\d+)\s*a\s*(\d+)$/); if(!m) return null; let a=+m[1], b=+m[2]; if(b<=a) b+=24; return [a,b]; }
+const nom=n=>(S.D&&S.D.nom[n])||n;
+const hh=x=>{ x=((x%24)+24)%24; return Math.floor(x)+(x%1?':'+('0'+Math.round(x%1*60)).slice(-2):''); };
+
+// datos: el mes actual y el anterior vienen en getInit; los otros meses publicados se piden aparte
+function guardar(){ ls.set('enf-datos',JSON.stringify({D:S.D,M:S.M})); }
+function cargarCache(){ try{ const o=JSON.parse(ls.get('enf-datos')||'null'); if(o&&o.D){ S.D=o.D; S.M=o.M||{}; return true; } }catch(e){} return false; }
+async function cargar(){
+  const I=JSON.parse(await api('getInit'));
+  const nomb={}; (I.medicos||[]).forEach(m=>nomb[m.n]=m.nom||m.n);
+  S.D={nom:nomb, fest:I.festivos||{}, idx:I.idx||{}, t:Date.now()};
+  S.M={}; Object.keys(I.months||{}).forEach(ym=>S.M[ym]=I.months[ym]);
+  const sig=ymAdd(I.ymNow,1);
+  if(UNIDADES().some(u=>(S.D.idx[u]||[]).indexOf(sig)>-1)){ try{ S.M[sig]=JSON.parse(await api('getMonth',[sig,''])); }catch(e){} }
+  guardar();
+}
+const UNIDADES=()=>['uci','utia','utib'];
+async function mesData(ym){
+  if(S.M[ym]) return S.M[ym];
+  if(!UNIDADES().some(u=>(S.D.idx[u]||[]).indexOf(ym)>-1)) return null;
+  S.M[ym]=JSON.parse(await api('getMonth',[ym,''])); guardar(); return S.M[ym];
+}
+// tramos de un día en una unidad: [{n, A, Z, s, e}] con horas desde las 0 de ese día
+function tramos(ym,u,d){
+  const m=S.M[ym]&&S.M[ym][u]; if(!m) return null;
+  const L=(m.days||{})[String(d)]||[], out=[];
+  L.forEach(b=>{
+    if(b.e==='vacio') return;
+    const M=b.m||[];
+    if(!M.length){ const r=hrs(b.h); if(r&&b.e==='rojo') out.push({n:'',A:r[0],Z:r[1],s:b.s||'',e:'rojo'}); return; }
+    M.forEach(q=>{ const r=hrs(q.h||b.h); if(r) out.push({n:q.n,A:r[0],Z:r[1],s:b.s||'',e:b.e||''}); });
+  });
+  // bloques seguidos de la misma persona y sector: uno solo
+  out.sort((a,b)=>a.A-b.A||String(a.s).localeCompare(b.s));
+  const J=[]; out.forEach(x=>{ const p=J.find(y=>y.n===x.n&&y.n&&y.s===x.s&&Math.abs(y.Z-x.A)<.01); if(p) p.Z=x.Z; else J.push({...x}); });
+  return J.sort((a,b)=>a.A-b.A||String(a.s).localeCompare(b.s));
+}
+function filaT(x,base){
+  const lab=x.n?`<span class="n">${esc(nom(x.n))}</span>`:`<span class="n pc">Por cubrir</span>`;
+  const dur=x.Z-x.A;
+  return `<div class="row"><span class="h">${hh(x.A-(base||0))} a ${hh(x.Z-(base||0))}</span>${lab}${dur>=23?'<span class="sec">24 h</span>':''}${x.s?`<span class="sec">${esc(x.s)}</span>`:''}</div>`;
+}
+const tramoDe=A=>{ const a=((A%24)+24)%24; return (a>=19||a<5)?'noche':a>=12?'tarde':'manana'; };
+
+function vTurno(){
+  const N=ahora(), hoy=N.iso, ay=isoAdd(hoy,-1), man=isoAdd(hoy,1), u=S.u;
+  const T=(iso)=>tramos(iso.slice(0,7),u,+iso.slice(8));
+  const hoyT=T(hoy), ayT=T(ay)||[], manT=T(man);
+  if(!hoyT) return `<div class="card empty">Todavía no está publicado el calendario de ${esc(UN[u])} para este mes.</div>`;
+  // ahora: los de hoy que ya empezaron y siguen + los de ayer que pasan la medianoche
+  const vivos=[...ayT.filter(x=>x.Z-24>N.h).map(x=>({...x,A:x.A-24,Z:x.Z-24})), ...hoyT.filter(x=>x.A<=N.h&&x.Z>N.h)];
+  let h=`<div class="card now"><h2>🟢 Ahora en ${esc(UN[u])} <small>${hh(N.h)} h</small></h2>`;
+  h+=vivos.length?vivos.map(x=>`<div class="row"><span class="h">hasta ${hh(x.Z)}</span><span class="n">${x.n?esc(nom(x.n)):'<span class="pc">Por cubrir</span>'}<small>${hh(x.A)} a ${hh(x.Z)} h</small></span>${x.s?`<span class="sec">${esc(x.s)}</span>`:''}</div>`).join(''):'<div class="empty">Sin médico cargado para esta hora.</div>';
+  h+='</div>';
+  const dia=(lista,titulo,iso)=>{
+    if(!lista) return '';
+    const fest=S.D.fest[iso];
+    let c=`<div class="card"><h2>${titulo} <small>${WD[new Date(iso+'T12:00').getDay()]} ${+iso.slice(8)}/${+iso.slice(5,7)}${fest?' · festivo':''}</small></h2>`;
+    const G={manana:[],tarde:[],noche:[]}; lista.forEach(x=>G[tramoDe(x.A)].push(x));
+    [['manana','☀️ Mañana'],['tarde','🌇 Tarde'],['noche','🌙 Noche']].forEach(([k,t])=>{ if(G[k].length) c+=`<div class="tramo">${t}</div>`+G[k].map(x=>filaT(x)).join(''); });
+    if(!lista.length) c+='<div class="empty">Sin turnos cargados.</div>';
+    return c+'</div>';
+  };
+  h+=dia(hoyT,'Hoy',hoy)+dia(manT,'Mañana',man);
+  return h;
+}
+async function vMes(){
+  const ym=S.ym; await mesData(ym).catch(()=>null);
+  const p=ym.split('-').map(Number), nd=new Date(p[0],p[1],0).getDate(), hoy=ahora().iso;
+  const tiene=y=>UNIDADES().some(u=>(S.D.idx[u]||[]).indexOf(y)>-1);
+  let h=`<div class="mnav"><button id="mPrev" ${tiene(ymAdd(ym,-1))?'':'disabled'} aria-label="Mes anterior">‹</button><b>${MES[p[1]-1]} ${p[0]}</b><button id="mNext" ${tiene(ymAdd(ym,1))?'':'disabled'} aria-label="Mes siguiente">›</button></div>`;
+  if(!S.M[ym]||!S.M[ym][S.u]) return h+`<div class="card empty">${esc(UN[S.u])} no tiene publicado ${MES[p[1]-1]}.</div>`;
+  for(let d=1;d<=nd;d++){
+    const iso=ym+'-'+('0'+d).slice(-2), w=new Date(p[0],p[1]-1,d).getDay(), L=tramos(ym,S.u,d)||[], fest=S.D.fest[iso];
+    h+=`<div class="card day${iso===hoy?' hoy':''}${iso<hoy?' pas':''}" id="d${iso}"><h2>${WD[w]} ${d}/${p[1]}${fest?` <span class="fest">${esc(fest)}</span>`:''}</h2>${L.length?L.map(x=>filaT(x)).join(''):'<div class="empty">Sin turnos cargados.</div>'}</div>`;
+  }
+  return h;
+}
+function vAisl(){ return `<div class="card aisl"><div class="e">🦠</div><h2 style="margin:0">Aislamientos</h2><p style="margin:0;color:var(--dim)">Qué precaución y por cuánto tiempo, según el germen. Funciona también sin señal.</p><a href="aislamientos.html">Abrir Aislamientos</a></div>`; }
+
+function pintarUnidades(){
+  const U=$('#units'); U.hidden=false;
+  U.innerHTML=UNIDADES().map(u=>`<button data-u="${u}" aria-pressed="${u===S.ver}"><i style="background:${UC[u]}"></i>${UN[u]}</button>`).join('');
+  U.querySelectorAll('button').forEach(b=>b.onclick=()=>{ S.ver=b.dataset.u; pintar(); });
+}
+async function pintar(){
+  if(!S.u){ return elegirUnidad(); }
+  const uDef=S.u; S.u=S.ver||S.u; pintarUnidades(); $('#tabs').hidden=false;
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===S.tab)));
+  const V=$('#view');
+  try{
+    if(!S.D){ V.innerHTML='<div class="card empty">Cargando…</div>'; S.u=uDef; return; }
+    V.innerHTML = S.tab==='turno'?vTurno() : S.tab==='mes'?await vMes() : vAisl();
+    V.innerHTML+=`<div class="foot">📌 Este celular es de <b>${esc(UN[uDef])}</b> · <button id="cambU">cambiar</button><br>${S.D.t?'Actualizado '+new Date(S.D.t).toLocaleString('es-CL',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div>`;
+    $('#cambU').onclick=()=>{ S.u=''; S.ver=''; elegirUnidad(); };
+    if(S.tab==='mes'){
+      $('#mPrev').onclick=()=>{ S.ym=ymAdd(S.ym,-1); pintar(); }; $('#mNext').onclick=()=>{ S.ym=ymAdd(S.ym,1); pintar(); };
+      const t=document.getElementById('d'+ahora().iso); if(t&&!S.scrolled){ S.scrolled=1; t.scrollIntoView({block:'start'}); }
+    }
+  }catch(e){ V.innerHTML=`<div class="card err">No se pudo cargar: ${esc(e.message||e)}</div>`; }
+  S.u=uDef;
+}
+function elegirUnidad(){
+  $('#units').hidden=true; $('#tabs').hidden=true;
+  $('#view').innerHTML=`<div class="pick"><h2>¿De qué unidad es este celular?</h2><p>Se abre siempre en esa unidad. Las otras se ven con un toque.</p>${UNIDADES().map(u=>`<button data-u="${u}" style="background:${UC[u]}">${UN[u]}</button>`).join('')}</div>`;
+  document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{ S.u=b.dataset.u; S.ver=S.u; ls.set('enf-u',S.u); pintar(); });
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{ S.tab=b.dataset.t; if(S.tab==='mes'){ S.ym=S.ym||ahora().iso.slice(0,7); S.scrolled=0; } window.scrollTo(0,0); pintar(); });
+
+async function refrescar(){
+  try{ await cargar(); }catch(e){ if(!S.D){ $('#view').innerHTML=`<div class="card err">No se pudo cargar el calendario. Revisa la conexión y vuelve a abrir.<br><small>${esc(e.message||e)}</small></div>`; return; } }
+  if(S.tab!=='aisl') pintar();
+}
+S.ver=S.u; S.ym=ahora().iso.slice(0,7);
+if(cargarCache()) pintar(); else if(!S.u) elegirUnidad();
+refrescar();
+setInterval(()=>{ if(!document.hidden) refrescar(); },10*60*1000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && S.D && Date.now()-S.D.t>2*60*1000) refrescar(); });
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
