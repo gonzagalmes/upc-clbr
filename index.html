@@ -485,6 +485,7 @@ textarea{width:100%; min-height:170px; font:13px/1.55 var(--f-body); color:var(-
 @media (prefers-reduced-motion: no-preference){ .cuoban.alarma{animation:alarmaB 1.4s ease-out infinite} .cuoban .ico,.cuoal .ico,.tabs .cnt.alarm{animation:titila 1.1s steps(1,end) infinite} }
 .qr .hh .ft{font-family:var(--f-body);margin-left:8px;font-size:12px;color:inherit;opacity:.85;font-weight:500;white-space:nowrap}.qr .hh .ft.h24{opacity:1;font-weight:800;background:rgba(0,0,0,.22);padding:1px 6px;border-radius:6px}
 .who{flex-wrap:wrap; row-gap:8px}
+.comtxt{white-space:pre-wrap;padding:12px 14px;margin:10px 0 0;line-height:1.45} .fl{display:flex;flex-direction:column;gap:4px;margin-top:10px;font-weight:700;font-size:13px} .fl input,.fl textarea,.fl select{font:inherit;font-weight:400;font-size:15px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)} .chk{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:14px} .compv{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:2px;font-size:14px;white-space:pre-wrap} .comh{display:flex;gap:10px;align-items:flex-start;border-top:1px solid var(--line);padding:8px 0} .comh>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px} .comh small{color:var(--dim);font-size:12.5px} .comh details{margin-top:4px} .comh summary{cursor:pointer;color:var(--dim);font-size:13px} .comf{display:flex;justify-content:space-between;align-items:center;padding:4px 0} .buzm{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px} .buzm.nuevo{border-color:var(--rojo)} .buzh{display:flex;justify-content:space-between;gap:8px} .buzh small{color:var(--dim)} .buzr{background:var(--bg);border-radius:10px;padding:8px 10px;margin:6px 0;font-size:14px;white-space:pre-wrap}
 .whoref.tut{display:inline-flex;align-items:center;gap:4px}.whoref.tut small{font-size:11px;font-weight:600;letter-spacing:.02em}
 .whoref{background:none; border:1px solid #344050; border-radius:8px; color:var(--ink-dim); font-size:14px; padding:3px 8px; line-height:1}
 .cuoban{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; background:#3A1A1D; border:1px solid #8A3138; color:#FFD9DB; border-radius:12px; padding:10px 14px; font-size:14px; margin-top:10px}
@@ -909,7 +910,7 @@ function gs(fn,...args){ return new Promise((res,rej)=>{ const id=++GS_ID; GS_PE
   const fin=f=>v=>{ if(!GS_PEND.has(id)) return; GS_PEND.delete(id); clearTimeout(to); f(v); };
   const to=setTimeout(fin(rej).bind(null,new Error(`el servidor no respondió a "${fn}" en 60 s`)),60000);
   google.script.run.withSuccessHandler(fin(res)).withFailureHandler(fin(e=>{ if(/^(Error: )?PIN:/.test(String((e&&e.message)||e)) && window.UPC_PWA && !PIN_FONDO.includes(fn)) pinPedir().then(()=>gs(fn,...args).then(res,rej), rej); else rej(e); }))[fn](...args); }); }
-const PIN_FONDO=['getMemo','setMemo','misAvisos','getMiDisp','getCuo','pushRegistrar','avisoVisto'];   // llamadas de fondo: no abren la ventana del PIN
+const PIN_FONDO=['misComunicados','comLeido','getMemo','setMemo','misAvisos','getMiDisp','getCuo','pushRegistrar','avisoVisto'];   // llamadas de fondo: no abren la ventana del PIN
 function gsPendTxt(){ const now=Date.now(); return [...GS_PEND.values()].map(x=>`${x.fn} (${Math.round((now-x.t)/1000)} s)`).join(', '); }
 async function gsj(fn,...args){ return JSON.parse(await gs(fn,...args)); }
 function errMsg(e){ return String((e&&e.message)||e||'algo falló').replace(/^Error:\s*/,'').replace(/^PIN:\s*/,''); }
@@ -1415,6 +1416,7 @@ function premioCuota(q){
 }
 function avisoCuota(){
   if(avisoMedPop()) return;
+  if(comPop()) return;
   if(cambiosPop()) return;
   if(cumplePop()) return;
   if(asadoPop()) return;
@@ -2046,6 +2048,113 @@ function usoFilas(){ const D=S.uso||{}, hoy=todayIso(); return ((ADMIN&&ADMIN.me
   return {n:m.n, nom:nom(m.n), u:r.u, t:r.t, d:r.d, s7:sum(7), s30:sum(30), dias:r.u?dayNum(hoy)-dayNum(r.u.slice(0,10)):9999}; }); }
 function usoResumen(){ if(!S.uso) return null; const F=usoFilas(); return {tot:F.length, sem:F.filter(x=>x.dias<7).length, mes:F.filter(x=>x.dias<30).length, nunca:F.filter(x=>!x.u).length}; }
 function usoHace(x){ if(!x.u) return 'nunca'; const h=x.u.slice(11); return x.dias<=0?`hoy ${h}`:x.dias===1?`ayer ${h}`:x.dias<7?`hace ${x.dias} días`:x.dias<14?'hace 1 semana':x.dias<60?`hace ${Math.floor(x.dias/7)} semanas`:'hace +2 meses'; }
+// ---------- 📣 v4.17: comunicados de la jefatura ----------
+// al médico: los comunicados que quedan en la app hasta que toca Entendido
+function comPop(){
+  const L=(S.coms||[]); if(!L.length || !$('#ovl').hidden) return false;
+  const x=L[0];
+  openModal(`<div style="text-align:center;font-size:40px;line-height:1">📣</div><div class="sm-dim" style="text-align:center;margin-top:4px">Comunicado de la jefatura · ${esc(x.f)}</div>
+    ${x.t?`<h3 style="text-align:center;margin-top:6px">${esc(x.t)}</h3>`:''}
+    <div class="card comtxt">${esc(x.c)}</div>
+    <div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" id="comOk">✓ Entendido</button></div>`);
+  $('#comOk').onclick=()=>{ S.coms=L.slice(1); gsj('comLeido',S.me,[x.id]).catch(()=>{}); closeModal(); setTimeout(avisoCuota,300); };
+  return true;
+}
+const COM_PLANT=()=>{
+  const mes=MESES[+INIT.ymNow.slice(5)-1].toLowerCase(), sig=MESES[+ymAdd(INIT.ymNow,1).slice(5)-1].toLowerCase();
+  let nP=0; try{ nP=agruparPend((INIT.pend||[]).filter(p=>pendIso(p)>=todayIso())).length; }catch(e){}
+  const L=[
+    {k:'cuo',b:'💰 Cuota',t:'💰 Cuota del fondo común',c:`¡Hola! 🙌 Les recuerdo pagar la cuota del fondo común UPC de ${mes}.\nPueden pagar por suscripción de Mercado Pago o por transferencia: los datos están en la app → Mis turnos → Tu cuota.\n¡Gracias! 🙏`,dest:'deben',quedar:true},
+    {k:'pend',b:'🔴 Turnos sin cubrir',t:'🔴 Hay turnos sin cubrir',c:`Hay ${nP||'varios'} ${nP===1?'turno pendiente':'turnos pendientes'} en los próximos días.\nSi puedes tomar alguno, anótate en la app → Anotarse ✋`,dest:'todos',quedar:false},
+    {k:'disp',b:'🗓️ Disponibilidad',t:'🗓️ Confirma tu disponibilidad',c:`Si tienes horario fijo, confirma tu disponibilidad de ${sig} en la app → Mis turnos → Mi disponibilidad 🙏`,dest:'todos',quedar:true}];
+  if(INIT.asado&&INIT.asado.ev) L.push({k:'asado',b:'🔥 Asado',t:'🔥 Código Asado',c:`¡Todavía no confirmaste el asado del ${fmtD(INIT.asado.ev.fecha)}! 🍖\nEntra a la app y responde si vas y con cuánta gente 🙌`,dest:'asado',quedar:false});
+  return L;
+};
+async function comModal(){
+  openModal('<h3>📣 Comunicado</h3><div class="loading">Cargando…</div>', true);
+  try{ S.comD=await gsj('adminComunicados',PIN); }catch(e){ closeModal(); toast('No se pudo cargar: '+errMsg(e),true); return; }
+  S.comF=S.comF||{t:'',c:'',dest:'todos',quedar:true,prog:false,cuando:''}; comPintar();
+}
+function comPintar(){
+  const D=S.comD, F=S.comF, P=COM_PLANT(), meds=(ADMIN&&ADMIN.medicos)||[];
+  const nDest={todos:D.todos,deben:D.deben,asado:D.asado};
+  const destOp=[['todos','👥 Todos los médicos'],['deben','💰 Solo los que deben cuota']].concat(D.asado!=null?[['asado','🔥 Los que no respondieron el asado']]:[]);
+  const pend=D.L.filter(x=>!x.env).sort((a,b)=>a.cuando-b.cuando), env=D.L.filter(x=>x.env).sort((a,b)=>b.env-a.env);
+  const fch=ms=>{ const d=new Date(ms); return `${WD[d.getDay()]} ${d.getDate()}/${d.getMonth()+1} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+  const destTxt={todos:'todos',deben:'los que deben cuota',asado:'los que no respondieron el asado'};
+  const hist=x=>{ const lei=Object.keys(x.leidos||{}), falta=(x.para||[]).filter(n=>!lei.includes(n));
+    return `<div class="comh"><div><b>${esc(x.t||x.c.slice(0,40))}</b><small>${fch(x.env)} · a ${(x.para||[]).length} (${destTxt[x.dest]||'todos'})${x.quedar?` · 👀 ${lei.length} de ${(x.para||[]).length} lo leyeron`:' · solo push'}</small>
+      ${x.quedar&&falta.length?`<details><summary>Faltan ${falta.length}</summary>${falta.map(n=>{ const m=meds.find(z=>z.n===n)||{}; return `<div class="comf"><span>${esc(nom(n))}</span>${m.cel?`<a class="btn sm wa" href="https://wa.me/${m.cel}?text=${encodeURIComponent('¡Hola, '+nom(n)+'! Te dejé un comunicado en la app UPC CLBR: '+(x.t||'')+' 🙏')}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>`; }).join('')}</details>`:''}</div>
+      <button class="btn sm" data-cdel="${x.id}" title="Quitar de la app y del historial">🗑️</button></div>`; };
+  $('#modal').innerHTML=`<h3>📣 Comunicado</h3>
+    <div class="sm-dim" style="margin-bottom:6px">Textos listos (los puedes editar):</div>
+    <div class="row" style="flex-wrap:wrap;gap:6px;justify-content:flex-start">${P.map(p=>`<button class="btn sm" data-cpl="${p.k}">${p.b}</button>`).join('')}</div>
+    <label class="fl">Título<input id="comT" maxlength="100" placeholder="Ej: 💰 Cuota de diciembre" value="${esc(F.t)}"></label>
+    <label class="fl">Mensaje<textarea id="comC" rows="5" maxlength="1200" placeholder="Escribe aquí… (puedes usar emojis 😄)">${esc(F.c)}</textarea></label>
+    <label class="fl">A quién<select id="comD">${destOp.map(([k,t])=>`<option value="${k}"${F.dest===k?' selected':''}>${t} (${nDest[k]})</option>`).join('')}</select></label>
+    <label class="chk"><input type="checkbox" id="comQ"${F.quedar?' checked':''}><span>Que quede en la app hasta que lo lean (y ver quién lo leyó)</span></label>
+    <label class="chk"><input type="checkbox" id="comP"${F.prog?' checked':''}><span>Programar para más tarde</span></label>
+    <input type="datetime-local" id="comW" value="${esc(F.cuando)}" ${F.prog?'':'hidden'} style="margin-top:6px">
+    <div class="sm-dim" style="margin:12px 0 4px">Así llega al celular:</div>
+    <div class="compv"><b>${esc(F.t||'📣 Comunicado de la jefatura')}</b><span>${esc(F.c||'…')}</span></div>
+    <div class="mrow"><button class="btn" id="comX">Cerrar</button><button class="btn pri" id="comGo">${F.prog?'⏰ Programar':'📣 Enviar ahora'}</button></div>
+    ${pend.length?`<h4 style="margin:16px 0 6px">⏰ Programados</h4>${pend.map(x=>`<div class="comh"><div><b>${esc(x.t||x.c.slice(0,40))}</b><small>${fch(x.cuando)} · a ${destTxt[x.dest]}</small></div><button class="btn sm" data-cdel="${x.id}">Cancelar</button></div>`).join('')}`:''}
+    ${env.length?`<h4 style="margin:16px 0 6px">📜 Enviados</h4>${env.slice(0,15).map(hist).join('')}`:''}`;
+  const sync=()=>{ F.t=$('#comT').value; F.c=$('#comC').value; F.dest=$('#comD').value; F.quedar=$('#comQ').checked; F.prog=$('#comP').checked; F.cuando=$('#comW').value; };
+  ['#comT','#comC'].forEach(q=>$(q).oninput=()=>{ sync(); const pv=$('.compv'); pv.innerHTML=`<b>${esc(F.t||'📣 Comunicado de la jefatura')}</b><span>${esc(F.c||'…')}</span>`; });
+  $('#comD').onchange=sync; $('#comQ').onchange=sync; $('#comW').onchange=sync;
+  $('#comP').onchange=()=>{ sync(); if(F.prog&&!F.cuando){ const d=new Date(Date.now()+3600e3); F.cuando=`${todayIso()}T${pad(d.getHours())}:00`; } comPintar(); };
+  document.querySelectorAll('[data-cpl]').forEach(b=>b.onclick=()=>{ const p=P.find(z=>z.k===b.dataset.cpl); Object.assign(F,{t:p.t,c:p.c,dest:p.dest,quedar:p.quedar}); comPintar(); });
+  document.querySelectorAll('[data-cdel]').forEach(b=>b.onclick=async()=>{ b.disabled=true; try{ S.comD.L=(await gsj('adminComBorrar',PIN,b.dataset.cdel)).L; comPintar(); }catch(e){ toast(errMsg(e),true); b.disabled=false; } });
+  $('#comX').onclick=closeModal;
+  $('#comGo').onclick=async()=>{
+    sync(); if(!F.c.trim()){ toast('Escribe el mensaje'); return; }
+    let cuando=0; if(F.prog){ cuando=new Date(F.cuando).getTime(); if(!cuando||cuando<Date.now()+60e3){ toast('Elige una fecha y hora futura'); return; } }
+    const b=$('#comGo'); b.disabled=true; b.textContent='Enviando…';
+    try{ const r=await gsj('adminComEnviar',PIN,{t:F.t,c:F.c,dest:F.dest,quedar:F.quedar,cuando});
+      S.comD.L=r.L; S.comF=null; S.comF={t:'',c:'',dest:'todos',quedar:true,prog:false,cuando:''};
+      toast(r.env?`📣 Enviado a ${r.n} ${plural(r.n,'médico','médicos')} ✓`:'⏰ Programado ✓'); comPintar();
+    }catch(e){ toast(errMsg(e),true); b.disabled=false; b.textContent=F.prog?'⏰ Programar':'📣 Enviar ahora'; }
+  };
+}
+// ---------- 💬 v4.17: buzón ----------
+async function buzMedModal(){
+  if(!S.me){ pickName(); return; }
+  openModal(`<h3>💬 Escribirle a la jefatura</h3>
+    <div class="sm-dim">Sugerencias, pedidos, problemas o lo que quieras contar. Le llega al instante a la jefatura.</div>
+    <label class="fl">Tu mensaje<textarea id="buzT" rows="5" maxlength="1500" placeholder="Escribe aquí…"></textarea></label>
+    <label class="chk"><input type="checkbox" id="buzA"><span>Enviar anónimo <small class="sm-dim">(no se guarda tu nombre y no se puede responder)</small></span></label>
+    <div class="mrow"><button class="btn" id="buzX">Cerrar</button><button class="btn pri" id="buzGo">Enviar</button></div>
+    <div id="buzMis" style="margin-top:14px"></div>`);
+  $('#buzX').onclick=closeModal;
+  $('#buzGo').onclick=async()=>{ const t=$('#buzT').value.trim(); if(!t){ toast('Escribe tu mensaje'); return; }
+    const b=$('#buzGo'); b.disabled=true; b.textContent='Enviando…';
+    try{ await conPin(()=>gs('buzonEnviar',S.me,t,$('#buzA').checked)); closeModal(); toast('💬 Mensaje enviado a la jefatura ✓'); }
+    catch(e){ toast(errMsg(e),true); b.disabled=false; b.textContent='Enviar'; } };
+  try{ const L=await gsj('misMensajes',S.me); if(L.length && $('#buzMis')) $('#buzMis').innerHTML=`<h4 style="margin:0 0 6px">Tus mensajes</h4>`+L.slice(0,10).map(x=>`<div class="comh"><div><span>${esc(x.txt)}</span><small>${esc(x.ts)}</small>${x.resp?`<div class="buzr">💬 <b>Jefatura</b> (${esc(x.rts)}): ${esc(x.resp)}</div>`:'<small>Sin respuesta todavía</small>'}</div></div>`).join(''); }catch(e){}
+}
+async function buzModal(){
+  openModal('<h3>💬 Buzón</h3><div class="loading">Cargando…</div>', true);
+  try{ S.buz=await gsj('adminBuzon',PIN); }catch(e){ closeModal(); toast('No se pudo cargar: '+errMsg(e),true); return; }
+  buzPintar();
+}
+function buzPintar(){
+  const L=S.buz||[]; INIT.buzN=L.filter(x=>!x.visto).length;
+  $('#modal').innerHTML=`<h3>💬 Buzón</h3>${L.length?'':'<div class="sm-dim">Todavía no hay mensajes.</div>'}
+    ${L.map(x=>`<div class="buzm${x.visto?'':' nuevo'}"><div class="buzh"><b>${x.n?esc(nom(x.n)):'🕶️ Anónimo'}</b><small>${esc(x.ts)}${x.visto?'':' · <span class="warn">nuevo</span>'}</small></div>
+      <div class="comtxt" style="margin:6px 0">${esc(x.txt)}</div>
+      ${x.resp?`<div class="buzr">↩️ Tu respuesta (${esc(x.rts)}): ${esc(x.resp)}</div>`:''}
+      <div class="row" style="gap:6px;flex-wrap:wrap">${x.n&&!x.resp?`<button class="btn sm pri" data-bres="${x.id}">Responder</button>`:''}${x.visto?'':`<button class="btn sm" data-bvis="${x.id}">✓ Visto</button>`}<button class="btn sm" data-bdel="${x.id}">🗑️</button></div>
+      <div id="br${x.id}"></div></div>`).join('')}
+    <div class="mrow"><button class="btn" id="buzX">Cerrar</button></div>`;
+  $('#buzX').onclick=()=>{ closeModal(); if(S.tab==='admin') render(); };
+  const act=async(fn,...a)=>{ try{ S.buz=await gsj(fn,PIN,...a); buzPintar(); }catch(e){ toast(errMsg(e),true); } };
+  document.querySelectorAll('[data-bvis]').forEach(b=>b.onclick=()=>act('adminBuzonVisto',b.dataset.bvis,false));
+  document.querySelectorAll('[data-bdel]').forEach(b=>b.onclick=()=>act('adminBuzonVisto',b.dataset.bdel,true));
+  document.querySelectorAll('[data-bres]').forEach(b=>b.onclick=()=>{ const id=b.dataset.bres, box=$('#br'+id);
+    box.innerHTML=`<textarea id="brt${id}" rows="3" maxlength="1500" placeholder="Tu respuesta… (le llega como aviso a su celular)" style="width:100%;margin-top:6px"></textarea><div class="row" style="justify-content:flex-end;margin-top:6px"><button class="btn sm pri" id="brg${id}">Enviar respuesta</button></div>`;
+    $('#brg'+id).onclick=()=>{ const t=$('#brt'+id).value.trim(); if(t) act('adminBuzonResp',id,t); }; });
+}
 async function usoModal(){
   openModal('<h3>Uso de la app</h3><div class="loading">Cargando…</div>', true);
   try{ S.uso=await gsj('adminIngresos',PIN); }catch(e){ closeModal(); toast('No se pudo cargar: '+errMsg(e),true); return; }
@@ -2484,8 +2593,9 @@ function renderRec(){
       ${it('recAis','🦠','Aislamientos','Qué precaución y por cuánto tiempo, según el germen',RECURSOS.aisl)}
       ${it('recIC','📞','Rol de llamado','Interconsultores de turno hoy')}
       ${it('recTut','ℹ️','Tutorial','Cómo usar la app y qué significa cada color')}
+      ${it('recBuz','💬','Escribirle a la jefatura','Sugerencias, pedidos o problemas · puede ser anónimo')}
     </div></div>${pushCard()}`;
-  $('#recIC').onclick=()=>icModal(); $('#recTut').onclick=()=>tutorial(0); wirePushCard();
+  $('#recIC').onclick=()=>icModal(); $('#recTut').onclick=()=>tutorial(0); $('#recBuz').onclick=()=>buzMedModal(); wirePushCard();
   if(window.UPC_PWA) $('#recMan').onclick=()=>abrirManual();
 }
 // el manual usa la sesión del PIN: antes de abrirlo se confirma que sigue vigente (si no, pide el PIN acá mismo)
@@ -2666,11 +2776,12 @@ function tutorial(k){
       <p><b>Agregar mis turnos a mi calendario:</b> para tenerlos en el iPhone o en Google.</p>
       <p>También tu <b>cuota</b> del fondo común y cómo pagarla.</p>`],
     ['🔐','Tu PIN y los avisos',`<p><b>PIN de 4 números:</b> se pide para lo personal (anotarte, cambios, tu cuota). Este celular te recuerda 90 días. ¿Lo olvidaste? "¿Olvidaste tu PIN?" te manda un código al mail.</p>
-      <p><b>🔔 Avisos al celular</b> (con la app instalada en el inicio): turnos disponibles, tus cambios aprobados, cumpleaños 🎂 y un <b>recordatorio 24 h y 12 h antes</b> de los turnos que tomas fuera de tu horario habitual.</p>`],
+      <p><b>🔔 Avisos al celular</b> (con la app instalada en el inicio): turnos disponibles, tus cambios aprobados, 📣 comunicados de la jefatura, cumpleaños 🎂 y un <b>recordatorio 24 h y 12 h antes</b> de los turnos que tomas fuera de tu horario habitual.</p>`],
     ['📚','Recursos',`<p>En la pestaña <b>📚 Recursos</b>:</p>
       <p><b>📖 Manual del residente</b>: la guía de la UPC, con buscador y checklists. Se abre dentro de la app con tu PIN.</p>
       <p><b>🦠 Aislamientos</b>: qué precaución y por cuánto tiempo, según el germen.</p>
       <p><b>📞 Rol de llamado</b>: qué especialista está de llamado hoy y el PDF del mes.</p>
+      <p><b>💬 Escribirle a la jefatura</b>: sugerencias, pedidos o problemas. Puede ser anónimo.</p>
       <p><b>ℹ️ Tutorial</b>: esta guía, cuando quieras.</p>`]];
   const [e,t,b]=C[k];
   openModal(`<div class="tut"><div class="te">${e}</div><h3>${t}</h3>${b}</div>
@@ -2811,7 +2922,7 @@ const TICON={
   rep:'<circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M2 20c0-3 2.2-5 5-5s5 2 5 5M12 20c0-3 2.2-5 5-5s5 2 5 5"/>',
   disp:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M9 15l2 2 4-4"/>'
 };
-const TEMO={asado:'🔥',uso:'👀',ic:'📞',hrs:'📊',cum:'🎂',sem:'🔁',mes:'📅',finde:'🔔',cuo:'💰',eq:'⚖️',fest:'⭐',nav:'🎄',rot:'🔄',log:'📜',auto:'💾',rep:'👥',disp:'🗓️',prem:'🏆'};
+const TEMO={com:'📣',buz:'💬',asado:'🔥',uso:'👀',ic:'📞',hrs:'📊',cum:'🎂',sem:'🔁',mes:'📅',finde:'🔔',cuo:'💰',eq:'⚖️',fest:'⭐',nav:'🎄',rot:'🔄',log:'📜',auto:'💾',rep:'👥',disp:'🗓️',prem:'🏆'};
 function toolTiles(k,W,drafts){
   const jefe=ADMIN.role==='jefe', G=[[],[]];
   const t=(g,id,tit,sub,cls,bang)=>G[g].push(`<button class="tool" data-tool="${id}"><span class="ti" aria-hidden="true">${TEMO[id]||'🔧'}</span><span class="tt"><b>${tit}${bang?BANG:''}</b><span class="${cls||''}">${sub}</span></span></button>`);
@@ -2836,6 +2947,8 @@ function toolTiles(k,W,drafts){
   t(1,'log','Registro de cambios', 'Quién cambió qué');
   if(jefe && INIT.asado && INIT.asado.ev){ const R=asadoResumen(); t(1,'asado','Asado UPC', `${R.si.length} van · ${R.tot} personas · ${R.falta.length} faltan`); }
   if(jefe && window.UPC_PWA) t(1,'pins','PIN de los médicos','Quién creó su PIN · códigos');
+  if(jefe) t(1,'com','Comunicado','Avisar algo a los médicos al instante');
+  if(jefe){ const nb=INIT.buzN||0; t(1,'buz','Buzón', nb?`${nb} ${plural(nb,'mensaje nuevo','mensajes nuevos')}`:'Mensajes de los médicos', nb?'warn':'', !!nb); }
   if(jefe){ const U=usoResumen(); t(1,'uso','Uso de la app', U?`${U.sem} de ${U.tot} entraron esta semana${U.nunca?` · ${U.nunca} nunca`:''}`:'Quién entra y cada cuánto'); }
   if(jefe){ const a=ADMIN.auto||{}, ok=['autoRespaldo','autoResumenLunes','autoAvisoFinde','autoAvisoCambios'].every(h=>(a.triggers||[]).includes(h));
     t(1,'auto','Respaldos y avisos', ok?`Último respaldo: ${a.ultimo||'—'}`:'Falta activarlos', ok?'':'warn', !ok); }
@@ -2843,7 +2956,7 @@ function toolTiles(k,W,drafts){
     try{ if(ab && ADMIN.dispData && ADMIN.dispData[c.ym]){ const F=fijosMes(c.ym), R=ADMIN.dispData[c.ym]; txt=`${MESES[+c.ym.slice(5)-1]}: ${F.filter(n=>R[n]&&R[n].conf).length} de ${F.length} confirmaron`; } }catch(e){}
     t(0,'disp','Disponibilidad', nN?`${nN} ${nN>1?'cambios nuevos':'cambio nuevo'} · ${txt}`:txt, nN?'warn':'', BG.disp); }
   // pestañas: lo del día a día arriba, lo de una vez por mes aparte
-  const all=[...G[0],...G[1]], id=x=>(x.match(/data-tool="(\w+)"/)||[])[1], DIA=['rep','sem','finde','log','eq','uso','asado'];
+  const all=[...G[0],...G[1]], id=x=>(x.match(/data-tool="(\w+)"/)||[])[1], DIA=['com','buz','rep','sem','finde','log','eq','uso','asado'];
   const dia=all.filter(x=>DIA.includes(id(x))).sort((a,b)=>DIA.indexOf(id(a))-DIA.indexOf(id(b))), men=all.filter(x=>!DIA.includes(id(x)));
   const tb=S.toolTab||'dia', bD=dia.some(x=>x.includes('class="bang"')), bM=men.some(x=>x.includes('class="bang"'));
   return `<div class="dtabs tooltabs"><button class="dtab${tb==='dia'?' on':''}" data-tt="dia">⚡ Día a día${bD?' <small>!</small>':''}</button><button class="dtab${tb==='men'?' on':''}" data-tt="men">🗓️ Una vez al mes${bM?' <small>!</small>':''}</button></div>
@@ -2855,6 +2968,8 @@ function abrirTool(id){
   if(id==='eq') return equidadModal();
   if(id==='log') return verRegistro();
   if(id==='uso') return usoModal();
+  if(id==='com') return comModal();
+  if(id==='buz') return buzModal();
   if(id==='pins') return pinsModal();
   if(id==='asado') return asadoModal();
   if(id==='fest') return festModal();
@@ -3521,7 +3636,8 @@ function cambiosN(){ return ADMIN&&ADMIN.role==='jefe' ? (ADMIN.camb||[]).length
 // al médico: "la jefatura aprobó / deshizo tu cambio"
 function avisoMedPop(){
   const L=(S.avisos||[]); if(!L.length || !$('#ovl').hidden) return false;
-  openModal(`<div style="text-align:center;font-size:40px;line-height:1">🔄</div><h3 style="text-align:center">${L.length>1?'Novedades de tus cambios':'Novedad de tu cambio'}</h3>
+  const soloBuz=L.every(a=>/^💬/.test(a.t)), hayBuz=L.some(a=>/^💬/.test(a.t));
+  openModal(`<div style="text-align:center;font-size:40px;line-height:1">${soloBuz?'💬':hayBuz?'🔔':'🔄'}</div><h3 style="text-align:center">${soloBuz?'Respuesta de la jefatura':hayBuz?'Novedades':L.length>1?'Novedades de tus cambios':'Novedad de tu cambio'}</h3>
     ${L.map(a=>`<div class="card" style="margin:8px 0;padding:12px 14px">${esc(a.t)}<div class="sm-dim" style="margin-top:4px">${esc(a.ts)}</div></div>`).join('')}
     <div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" id="avOk">Entendido</button></div>`);
   $('#avOk').onclick=()=>{ const ids=L.map(a=>a.id); S.avisos=[]; gsj('avisoVisto',S.me,ids).catch(()=>{}); closeModal(); setTimeout(avisoCuota,300); };
@@ -3836,8 +3952,9 @@ async function boot(){
     try{ decoIniciar(); }catch(e){ console.warn('deco',e); }
     const memoP=memoCargar(S.me);
     const avP=S.me?Promise.race([gsj('misAvisos',S.me).catch(()=>[]), new Promise(r=>setTimeout(()=>r([]),5000))]):Promise.resolve([]);
+    const comP=S.me?Promise.race([gsj('misComunicados',S.me).catch(()=>[]), new Promise(r=>setTimeout(()=>r([]),5000))]):Promise.resolve([]);
     $('#foot').textContent=`UPC CLBR · versión ${APP_V}`+(INIT.v===APP_V?'':` · ⚠️ Index.html y Code.gs no coinciden (servidor ${INIT.v||'anterior a 2.7'}): pega los dos de la misma versión e implementa de nuevo`);
-    await cargarMiDisp(); await memoP; S.avisos=await avP;
+    await cargarMiDisp(); await memoP; S.avisos=await avP; S.coms=await comP;
     let pin=leerPin();
     if(pin){ try{ ADMIN=await gsj('login',pin); PIN=pin; Object.keys(MONTHS).forEach(k=>delete MONTHS[k]); INIT.festivos=Object.fromEntries(ADMIN.festAll.filter(f=>f.on).map(f=>[f.f,f.n])); await preloadNow(); }catch(e){ ADMIN=null; PIN=null; } }
     render();
